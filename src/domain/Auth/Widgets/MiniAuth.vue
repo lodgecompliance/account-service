@@ -69,7 +69,7 @@
     </div>
     <div v-if="authenticated && isProfileSet" class="text-center">
       <h4 class="grey--text">Authenticated as</h4>
-      <p>{{ current_user.profile.full_name }}</p>
+      <small>{{ current_user.profile.full_name }}</small>
     </div>
   </div>
 </template>
@@ -175,7 +175,7 @@ export default {
       this.loading = true;
       auth.onAuthStateChanged(user => {
         this.SET_AUTH(user);
-        if(user) this.getAuth()
+        this.getAuth();
       })
       window.addEventListener('message', (message) => {
         const originTest = {
