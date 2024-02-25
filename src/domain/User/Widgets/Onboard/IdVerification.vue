@@ -1,7 +1,7 @@
 <template>
     <id-verification-form
         :user="$store.getters.current_user.profile"
-        :verification="verification"
+        :verification="verification" flat
         @saved="idVerificationSaved">
       <template #actions="{ loading, submitting, submit }">
         <slot name="actions" v-bind="{ loading, submitting, submit }"></slot>

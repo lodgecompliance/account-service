@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="px-5">
       <v-radio-group v-model="selected">
       <v-row justify="center">
         <v-col

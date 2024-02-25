@@ -23,7 +23,7 @@
       <v-col
           v-for="card in cards"
           :key="card.id"
-          cols="6" md="4"
+          cols="12" sm="6" md="4"
       >
         <stripe-credit-card :card="card">
           <template #actions="attr">

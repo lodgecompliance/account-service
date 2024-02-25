@@ -1,5 +1,5 @@
 <template>
-  <business-details-form :business="currentBusiness" @saved="businessSaved">
+  <business-details-form :business="currentBusiness" @saved="businessSaved" flat>
     <template #actions="{ loading, submitting, submit }">
       <slot name="actions" v-bind="{ loading, submitting, submit }"></slot>
     </template>

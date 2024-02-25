@@ -1,6 +1,6 @@
 <template>
     <personal-info-form
-        v-bind="$attrs"
+        v-bind="$attrs" flat
         @saved="(data) => $emit('completed', data)"
         :key="version" @update="version++"
     >

@@ -43,7 +43,6 @@
       <v-tabs-items v-model="tab">
         <v-tab-item class="pt-4">
             <v-form ref="form">
-
               <v-text-field
                   v-model="form.name"
                   dense

@@ -24,6 +24,7 @@
           v-for="(step, n) in steps"
           :key="step"
           :step="n+1"
+          class="pa-0"
       >
         <slot :name="step" v-bind="{ previousStep, nextStep, isLastStep, isFirstStep, stepCompleted }" />
       </v-stepper-content>

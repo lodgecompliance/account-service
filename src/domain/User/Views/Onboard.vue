@@ -4,7 +4,7 @@
         <v-col cols="12" sm="8" md="6">
           <div class="mb-5 text-center">
             <router-link :to="{name: 'home'}">
-              <img src="../../../assets/img/app-logo.png" width="80" alt="Lodge Compliance">
+              <img src="../../../assets/img/app-logo.png" height="80px" alt="Lodge Compliance">
             </router-link>
           </div>
           <data-container

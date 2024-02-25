@@ -282,6 +282,11 @@ export default {
   {
     background: #FFFFFF;
   }
+
+  .v-tabs {
+    flex: unset !important;
+  }
+
   @keyframes fadeInfadeOut {
     0% {
       opacity: 0.2;

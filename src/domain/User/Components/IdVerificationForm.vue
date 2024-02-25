@@ -1,105 +1,105 @@
 <template>
-  <v-row>
-    <v-col cols="12" md="6">
-      <v-card v-bind="$attrs" :loading="loading">
-        <slot name="header" />
-        <v-card-text>
-          <v-form ref="form" v-bind="$attrs">
-            <v-autocomplete
-                dense outlined
-                label="Country"
-                item-text="label"
-                item-value="value"
-                :items="countryList"
-                v-model="form.country"
-                @change="form.id_type = null"
-                :rules="[rules.required]"
-            >
-            </v-autocomplete>
-            <template v-if="form.country">
-              <v-select
+    <v-card v-bind="$attrs" :loading="loading">
+      <slot name="header" />
+      <v-card-text>
+        <v-row>
+          <v-col cols="12" md="6">
+            <v-form ref="form" v-bind="$attrs">
+              <v-autocomplete
                   dense outlined
-                  label="ID Type"
+                  label="Country"
                   item-text="label"
                   item-value="value"
-                  :items="idTypesOption"
-                  v-model="form.id_type"
+                  :items="countryList"
+                  v-model="form.country"
+                  @change="form.id_type = null"
                   :rules="[rules.required]"
               >
-              </v-select>
-              <template v-if="form.id_type">
-                <v-text-field
+              </v-autocomplete>
+              <template v-if="form.country">
+                <v-select
                     dense outlined
-                    type="text"
-                    :label="`ID number on ${idType.label}`"
-                    v-model="form.id_number"
-                    :rules="[rules.required, idType.validator]"
-                ></v-text-field>
-                <v-text-field
-                    dense outlined
-                    type="text"
-                    :label="`First Name on ${idType.label}`"
-                    v-model="form.first_name"
+                    label="ID Type"
+                    item-text="label"
+                    item-value="value"
+                    :items="idTypesOption"
+                    v-model="form.id_type"
                     :rules="[rules.required]"
                 >
-                </v-text-field>
-                <v-text-field
-                    dense outlined
-                    type="text"
-                    :label="`Last Name on ${idType.label}`"
-                    v-model="form.last_name"
-                    :rules="[rules.required]"
-                >
-                </v-text-field>
-                <file-upload
-                    v-model="form.id_image"
-                    accept="image/*"
-                    :custom-preview="true"
-                    :rules="!form.id_image ? [rules.required] : []"
-                >
-                  <template #default="{ document, selectNewFile }">
-                    <files-preview v-if="form.id_image" :value="[form.id_image]" :grid="1">
-                      <template #file-preview="{ file, placeholder, name, view }">
-                        <v-img
-                            :src="placeholder"
-                            height="200"
-                            contain
-                            class="mx-auto mb-3 pa-2"
-                            gradient="to bottom, rgba(0,0,0,.5), rgba(0,0,0,.1)"
-                        >
-                          <v-btn dark text small @click="view(file)">
-                            <v-icon small>mdi-arrow-expand-all</v-icon> view full
-                          </v-btn>
-                        </v-img>
-                      </template>
-                    </files-preview>
-                    <v-btn
-                        v-if="$attrs.disabled === undefined"
-                        color="primary"
-                        small text
-                        :loading="document.uploading"
-                        @click="selectNewFile"
-                        class="mb-2"
-                    ><v-icon small>mdi-paperclip</v-icon> Upload {{   form.id_type ? form.id_type : 'ID' }}</v-btn>
-                  </template>
-                </file-upload>
+                </v-select>
+                <template v-if="form.id_type">
+                  <v-text-field
+                      dense outlined
+                      type="text"
+                      :label="`ID number on ${idType.label}`"
+                      v-model="form.id_number"
+                      :rules="[rules.required, idType.validator]"
+                  ></v-text-field>
+                  <v-text-field
+                      dense outlined
+                      type="text"
+                      :label="`First Name on ${idType.label}`"
+                      v-model="form.first_name"
+                      :rules="[rules.required]"
+                  >
+                  </v-text-field>
+                  <v-text-field
+                      dense outlined
+                      type="text"
+                      :label="`Last Name on ${idType.label}`"
+                      v-model="form.last_name"
+                      :rules="[rules.required]"
+                  >
+                  </v-text-field>
+                  <file-upload
+                      v-model="form.id_image"
+                      accept="image/*"
+                      :custom-preview="true"
+                      :rules="!form.id_image ? [rules.required] : []"
+                  >
+                    <template #default="{ document, selectNewFile }">
+                      <files-preview v-if="form.id_image" :value="[form.id_image]" :grid="1">
+                        <template #file-preview="{ file, placeholder, name, view }">
+                          <v-img
+                              :src="placeholder"
+                              height="200"
+                              contain
+                              class="mx-auto mb-3 pa-2"
+                              gradient="to bottom, rgba(0,0,0,.5), rgba(0,0,0,.1)"
+                          >
+                            <v-btn dark text small @click="view(file)">
+                              <v-icon small>mdi-arrow-expand-all</v-icon> view full
+                            </v-btn>
+                          </v-img>
+                        </template>
+                      </files-preview>
+                      <v-btn
+                          v-if="$attrs.disabled === undefined"
+                          color="primary"
+                          small text
+                          :loading="document.uploading"
+                          @click="selectNewFile"
+                          class="mb-2"
+                      ><v-icon small>mdi-paperclip</v-icon> Upload {{   form.id_type ? form.id_type : 'ID' }}</v-btn>
+                    </template>
+                  </file-upload>
+                </template>
               </template>
-            </template>
-          </v-form>
-          <error-handler :error="formError" />
-        </v-card-text>
-        <slot name="actions" v-bind="{ loading, canSubmit, submitting, submit }"></slot>
-      </v-card>
-    </v-col>
-    <v-col v-if="verification">
-      <h4 class="headline text-center">Verification</h4>
-      <user-identity-verification
-          :user="user"
-          :verification="verification"
-          @synced="(id) => $emit('saved', id)"
-      />
-    </v-col>
-  </v-row>
+            </v-form>
+            <error-handler :error="formError" />
+          </v-col>
+          <v-col v-if="verification">
+            <h4 class="headline text-center">Verification</h4>
+            <user-identity-verification
+                :user="user"
+                :verification="verification"
+                @synced="(id) => $emit('saved', id)"
+            />
+          </v-col>
+        </v-row>
+      </v-card-text>
+      <slot name="actions" v-bind="{ loading, canSubmit, submitting, submit }"></slot>
+    </v-card>
 </template>
 
 <script>
