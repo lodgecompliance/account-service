@@ -6,7 +6,7 @@
     <v-col
         v-for="integration in integrations"
         :key="integration.id"
-        cols="6" md="4"
+        cols="12" sm="6" md="4"
     >
       <integration-card
           :business="business"

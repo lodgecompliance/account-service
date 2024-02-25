@@ -46,6 +46,8 @@ export default {
                           rules
                           term_url
                           status
+                          image
+                          cover_image
                           integrations {
                             key
                             value
@@ -82,6 +84,8 @@ export default {
                           rules
                           term_url
                           status
+                          image
+                          cover_image
                           integrations {
                             key
                             value

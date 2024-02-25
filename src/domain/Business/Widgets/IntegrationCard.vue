@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined>
+  <v-card flat>
     <v-card-title>
       {{ integration.title }}
     </v-card-title>

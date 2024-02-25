@@ -1,6 +1,6 @@
 <template>
 
-  <v-card outlined>
+  <v-card flat>
     <v-card-title>
       <span>{{ type.currency }} Wallet</span>
     </v-card-title>

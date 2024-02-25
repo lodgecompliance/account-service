@@ -62,7 +62,7 @@
     </section>
 
     <v-row v-if="wallets.length">
-      <v-col cols="6" md="4" v-for="wallet in wallets" :key="wallet.id">
+      <v-col cols="12" sm="6" md="4" v-for="wallet in wallets" :key="wallet.id">
         <wallet-card :wallet="wallet" />
       </v-col>
     </v-row>

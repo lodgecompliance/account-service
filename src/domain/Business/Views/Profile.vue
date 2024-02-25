@@ -4,15 +4,11 @@
             <v-col cols="12" md="8">
               <div class="d-flex justify-space-between align-center">
                 <div class="d-flex align-center mb-5">
-                  <profile-avatar
-                      :profile="currentBusiness"
-                      :size="80"
-                      color="accent"
-                  >
-                    <template #icon="{ size }">
-                      <v-icon color="primary" :size="size">mdi-briefcase-account</v-icon>
-                    </template>
-                  </profile-avatar>
+                  <business-image-form
+                    :business="currentBusiness"
+                    @updated="image => businessUpdated({ image })"
+                    title="Update profile image"
+                  />
                   <div class="ml-3">
                     <h2>{{ currentBusiness.name }}</h2>
                     <small class="text-capitalize">{{ currentBusiness.address | nullable }}</small>
@@ -68,11 +64,13 @@
     import BusinessStatus from "@/domain/Business/Components/BusinessStatus.vue";
     import BusinessDetails from "@/domain/Business/Components/BusinessDetailsForm.vue";
     import current_user from "@/domain/User/Mixins/current_user";
+    import BusinessImageForm from "@/domain/Business/Components/BusinessImageUpdate.vue";
 
     export default {
         name: "BusinessProfilePage",
         mixins:[current_user, current_business],
         components: {
+          BusinessImageForm,
           BusinessDetails, BusinessStatus, ProfileAvatar, AppLayer
         },
         data() {

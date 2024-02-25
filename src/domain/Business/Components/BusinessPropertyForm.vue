@@ -1,6 +1,42 @@
 <template>
   <v-card :loading="loading" :disabled="loading">
-    <v-card-title class="d-flex justify-space-between">
+    <file-upload
+        v-if="property"
+        @input="image => form.cover_image = image"
+    >
+      <template #default="{ document, selectNewFile }">
+        <v-img
+            :src="form.cover_image"
+            height="200px"
+            :alt="property.name"
+            class="white--text pa-3"
+            gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+        >
+          <div style="height: 200px" class="d-flex flex-wrap align-content-stretch">
+            <div style="width: 100%" class="d-flex justify-end">
+              <v-btn
+                  dark
+                  @click="selectNewFile"
+                  :loading="document.uploading"
+                  title="Update property cover image"
+                  icon><v-icon>mdi-pencil</v-icon>
+              </v-btn>
+            </div>
+            <div style="width: 100%">
+              <avatar-form
+                  :profile="property"
+                  size="70"
+                  color="accent"
+                  title="Update property image"
+                  @change="image => form.image = image"
+              >
+              </avatar-form>
+            </div>
+          </div>
+        </v-img>
+      </template>
+    </file-upload>
+    <v-card-title v-else class="d-flex justify-space-between">
       <span>Property</span>
       <v-btn icon @click="cancel">
         <v-icon>mdi-close</v-icon>
@@ -8,14 +44,7 @@
     </v-card-title>
     <div v-if="property" class="d-flex justify-space-between mb-3 px-3">
       <div class="d-flex align-center">
-        <profile-avatar
-            :profile="property"
-            color="accent"
-        >
-          <template #icon="{ size }">
-            <v-icon color="primary" :size="size">mdi-domain</v-icon>
-          </template>
-        </profile-avatar>
+
         <div class="ml-2">
           <div>{{ property.name }}</div>
           <small class="grey--text">{{ property.address }}</small>
@@ -161,13 +190,16 @@ import ProfileAvatar from "@/components/ProfileAvatar";
 import property from "@/domain/Business/Mixins/property";
 import BusinessIntegrationSelect from "@/domain/Business/Components/BusinessIntegrationSelect.vue";
 import business from "@/domain/Business/Mixins/business";
+import AvatarForm from "@/components/AvatarForm.vue";
+import FileUpload from "@/components/FileUpload.vue";
 
 export default {
   name: "BusinessPropertyForm",
   mixins:[form, business, property],
   components: {
+    FileUpload,
+    AvatarForm,
     BusinessIntegrationSelect,
-    ProfileAvatar,
     AddressInput,
     PhoneNumber,
     ErrorHandler
@@ -211,6 +243,8 @@ export default {
         address: property.address || null,
         rules: property.rules || null,
         term_url: property.term_url || null,
+        image: property.image || null,
+        cover_image: property.cover_image || null,
         status: property.status || 'enabled',
         integrations: this.convertMetaKeyValueToObj(property.integrations || []),
         metadata: this.convertMetaKeyValueToObj(property.metadata || [])
