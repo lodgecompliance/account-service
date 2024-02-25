@@ -42,6 +42,7 @@
         <template v-else-if="!isProfileSet">
             <slot name="before-profile-set" />
             <personal-info-form
+              flat
               :key="profileComponentKey"
               :form="profileComponentForm"
               @update="f => {
@@ -66,6 +67,10 @@
           </personal-info-form>
         </template>
     </div>
+    <div v-if="authenticated && isProfileSet" class="text-center">
+      <h4 class="grey--text">Authenticated as</h4>
+      <p>{{ current_user.profile.full_name }}</p>
+    </div>
   </div>
 </template>
 
@@ -82,6 +87,7 @@ import PersonalInfoForm from "@/domain/User/Components/PersonalInfoForm";
 import DataContainer from "@/components/DataContainer";
 import { auth } from "@/firebase";
 import appHelper from "@/helper/app";
+import config from "@/config";
 
 export default {
     name: 'MiniAuth',
@@ -146,7 +152,8 @@ export default {
         } else {
           this.loading = false
           this.isProfileSet = false;
-          this.$emit('completed', false)        }
+          this.$emit('completed', false)
+        }
       },
 
       authError(error) {
@@ -171,7 +178,12 @@ export default {
         if(user) this.getAuth()
       })
       window.addEventListener('message', (message) => {
-        if (['http://localhost:8081'].includes(message.origin)) {
+        const originTest = {
+          local: /^http:\/\/localhost:\d*/gm,
+          staging: /^https:\/\/staging(.*)\.lodgecompliance\.com/gm,
+          production: /^https:\/\/(?!staging)\w*\.lodgecompliance\.com/gm
+        }
+        if(originTest[config.app.env].test(message.origin)) {
           const { type } = message.data;
           switch (type) {
             case 'get-auth':

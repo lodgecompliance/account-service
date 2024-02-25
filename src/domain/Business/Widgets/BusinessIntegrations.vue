@@ -2,34 +2,31 @@
   <div v-if="!integrations.length" class="text-center grey--text py-5">
     There is no integration yet
   </div>
-  <section v-else>
-    <v-row>
-      <v-col
-          v-for="integration in integrations"
-          :key="integration.id"
-          cols="12" md="6"
+  <v-row v-else>
+    <v-col
+        v-for="integration in integrations"
+        :key="integration.id"
+        cols="6" md="4"
+    >
+      <integration-card
+          :business="business"
+          :integration="integration"
+          @integration-updated="integrationUpdated"
       >
-        <integration-card
-            :business="business"
-            :integration="integration"
-            @integration-updated="integrationUpdated"
-        >
-          <template #setup="{ save, saving, business, integration, info, closeSetup }">
-            <component
-                :is="`${integration.type.identifier}-setup`"
-                :business="business"
-                :integration="integration"
-                :info="info"
-                :saving="saving"
-                @setup="save"
-                @setup-saved="closeSetup"
-            />
-          </template>
-        </integration-card>
-      </v-col>
-    </v-row>
-
-  </section>
+        <template #setup="{ save, saving, business, integration, info, closeSetup }">
+          <component
+              :is="`${integration.type.identifier}-setup`"
+              :business="business"
+              :integration="integration"
+              :info="info"
+              :saving="saving"
+              @setup="save"
+              @setup-saved="closeSetup"
+          />
+        </template>
+      </integration-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

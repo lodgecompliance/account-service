@@ -17,6 +17,7 @@ import BusinessIntegrations from "@/domain/Business/Views/Integrations.vue";
 import BusinessStripeConnect from "@/domain/Business/Views/StripeConnect.vue";
 import BusinessProperties from "@/domain/Business/Views/Properties.vue";
 import BusinessWallets from "@/domain/Business/Views/Wallets.vue";
+import BusinessCreditCards from "@/domain/Business/Views/CreditCards.vue";
 
 Vue.use(VueRouter)
 
@@ -131,6 +132,15 @@ const routes = [
     component: BusinessWallets,
     meta: {
       title: "Business Wallets"
+    },
+    beforeEnter: multiguard([middleware.auth])
+  },
+  {
+    path: '/:business/credit-cards',
+    name: 'business.credit.cards',
+    component: BusinessCreditCards,
+    meta: {
+      title: "Business Credit Cards"
     },
     beforeEnter: multiguard([middleware.auth])
   },
