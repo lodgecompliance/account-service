@@ -1,0 +1,22 @@
+{
+  "projects": {
+    "dev": "guestregistration-4140a",
+    "prod": "guest-registration-prod"
+  },
+  "targets": {
+    "guestregistration-4140a": {
+      "hosting": {
+        "custom": [
+          "lodge-compliance-account-staging"
+        ]
+      }
+    },
+    "guest-registration-prod": {
+      "hosting": {
+        "custom": [
+          "lodge-compliance-account-prod"
+        ]
+      }
+    }
+  }
+}
