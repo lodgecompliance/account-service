@@ -12,7 +12,7 @@ const actions = {
     },
 
     broadcastAuth({ dispatch, getters }) {
-        const token = window.localStorage.getItem("gr-user");
+        const token = window.localStorage.getItem("lc-user");
         const expires = window.localStorage.getItem('token-expires')
         dispatch('broadcast', {
             type: 'auth',
@@ -27,12 +27,12 @@ const actions = {
         return new Promise((resolve, reject) => {
             auth.currentUser.getIdTokenResult(true)
             .then(tokenResult => {
-                window.localStorage.setItem('gr-user', tokenResult.token);
+                window.localStorage.setItem('lc-user', tokenResult.token);
                 window.localStorage.setItem('token-expires', tokenResult.expirationTime);
                 return dispatch('getAuthUser')
             }).then(() => resolve(true))
             .catch(e => {
-                window.localStorage.removeItem('gr-user');
+                window.localStorage.removeItem('lc-user');
                 window.localStorage.removeItem('token-expires');
                 reject(e)
             }).finally(() => {
@@ -177,7 +177,7 @@ const actions = {
             auth.signOut()
             .then(() => {
                 commit('UNSET_CURRENT_USER');
-                window.localStorage.removeItem('gr-user');
+                window.localStorage.removeItem('lc-user');
                 window.localStorage.removeItem('token-expires');
                 resolve()
             })

@@ -2,7 +2,7 @@ import store from './../../store';
 
 const middleware = {
     auth: (to, from, next) => {
-        if(window.localStorage.getItem('gr-user')){
+        if(window.localStorage.getItem('lc-user')){
             if(store.getters.app_ready && !store.getters.current_user.profile && to.name !== 'onboard'){
                 next({ name: 'onboard',
                     query: {
@@ -19,7 +19,7 @@ const middleware = {
     },
 
     guest: (to, from, next) => {
-        if(!window.localStorage.getItem('gr-user')) next();
+        if(!window.localStorage.getItem('lc-user')) next();
         else {
             next( to.query.redirect
                 ? { path: to.query.redirect }

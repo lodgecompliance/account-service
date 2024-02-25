@@ -176,7 +176,7 @@ export default {
           this.error = null;
           this.SET_APP_STATE(false);
           if(
-              window.localStorage.getItem('gr-user')
+              window.localStorage.getItem('lc-user')
               && window.localStorage.getItem('token-expires') > helper.nowTimestamp()
               && this.auth
               && this.current_user.profile
