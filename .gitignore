@@ -25,5 +25,6 @@ yarn-error.log*
 
 # environment variables
 .env
+.env.staging
 .env.development
 .env.production

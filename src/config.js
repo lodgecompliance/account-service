@@ -25,10 +25,10 @@ export default {
     },
     
     apollo: {
-        gr: process.env.VUE_APP_GR_GRAPHQL_ENDPOINT,
-        auth: process.env.VUE_APP_AUTH_GRAPHQL_ENDPOINT,
-        wallet: process.env.VUE_APP_WALLET_GRAPHQL_ENDPOINT,
-        account: process.env.VUE_APP_ACCOUNT_GRAPHQL_ENDPOINT,
+        gr: process.env.VUE_APP_GRAPHQL_GR_ENDPOINT,
+        auth: process.env.VUE_APP_GRAPHQL_AUTH_ENDPOINT,
+        wallet: process.env.VUE_APP_GRAPHQL_WALLET_ENDPOINT,
+        account: process.env.VUE_APP_GRAPHQL_ACCOUNT_ENDPOINT,
         client_key: process.env.VUE_APP_GRAPHQL_CLIENT_KEY
     },
 
