@@ -98,7 +98,7 @@ export default {
             })
         },
 
-        disconnectBusinessStripeIntegration(business_id, integration_id, code ) {
+        disconnectBusinessStripeIntegration(business_id, integration_id ) {
             return new Promise((resolve, reject) => {
                 this.mutate({
                     mutation: gql `

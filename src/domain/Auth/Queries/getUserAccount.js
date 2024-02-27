@@ -51,6 +51,20 @@ export default gql`
                   }
                 }
             }
+            notifications {
+                id
+                type
+                title
+                text
+                time
+                timestamp
+                read
+                read_at
+                metadata {
+                    key
+                    value
+                }
+            }
             businesses {
                 id
                 role

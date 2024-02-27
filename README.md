@@ -1,4 +1,4 @@
-# Helot Wallet
+# Lodge Compliance Account
 
 ## Project setup
 ```

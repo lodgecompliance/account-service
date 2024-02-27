@@ -115,5 +115,32 @@ export default {
             })
         },
 
+        getUserNotifications(notification_ids, mark_as_read) {
+            return new Promise((resolve, reject) => {
+                this.query({
+                    query: gql`
+                    query getUserNotifications($notification_ids:[ID], $mark_as_read: Boolean){
+                        getUserNotifications(notification_ids: $notification_ids, mark_as_read: $mark_as_read ){
+                            id
+                            type
+                            title
+                            text
+                            time
+                            timestamp
+                            read
+                            read_at
+                            metadata {
+                                key
+                                value
+                            }
+                        }
+                    }`,
+                    variables: { notification_ids, mark_as_read }
+                })
+                .then(response => resolve(response.data.getUserNotifications))
+                .catch(e => reject(e))
+            })
+        }
+
     }
 }

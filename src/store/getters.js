@@ -5,6 +5,7 @@ const getters = {
     auth: state => state.auth,
     authenticated: state => !!state.auth,
     current_user: state => state.current_user,
+    user_notifications: state => state.current_user.profile?.notifications || [],
     snackbar: state => state.snackbar,
     app_layout: state => state.app_layout,
     mode: state => state.mode,

@@ -44,6 +44,9 @@ const routes = [
     path: '/verify-email',
     name: 'email.verification',
     component: EmailVerification,
+    meta: {
+      title: "Email Verification"
+    },
   },
   {
     path: '/onboard/:pendingUserId?',

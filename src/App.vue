@@ -20,6 +20,7 @@
           <h4>{{ current_page.title || appName }}</h4>
         </v-toolbar-title>
         <v-spacer></v-spacer>
+        <header-notifications />
         <div class="mr-n6">
           <mode-switch v-if="$store.getters.mode" />
         </div>
@@ -112,19 +113,19 @@
 
 import {mapActions, mapMutations, mapGetters} from 'vuex'
 import NavDrawer from '@/components/NavDrawer.vue';
-import { fb, auth } from './firebase';
-import authState from './plugins/auth';
+import { auth } from './firebase';
 import helper from '@/helper';
 import update from './mixins/update';
 import config from './config';
 import ModeSwitch from "@/components/ModeSwitch";
 import ConfirmationDialog from "@/components/Utilities/ConfirmationDialog.vue";
-import UserBusinessSwitch from "@/domain/User/Components/UserBusinessSwitch.vue";
+import HeaderNotifications from "@/components/HeaderNotifications.vue";
 
 export default {
   name: 'App',
   mixins: [update],
   components: {
+    HeaderNotifications,
     ConfirmationDialog,
     //UserBusinessSwitch,
     ModeSwitch,

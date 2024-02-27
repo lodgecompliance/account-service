@@ -6,15 +6,15 @@
   "targets": {
     "guestregistration-4140a": {
       "hosting": {
-        "custom": [
-          "lodge-compliance-account-staging"
+        "lc": [
+          "lc-account-staging"
         ]
       }
     },
     "guest-registration-prod": {
       "hosting": {
-        "custom": [
-          "lodge-compliance-account-prod"
+        "lc": [
+          "lc-account-prod"
         ]
       }
     }

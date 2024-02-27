@@ -1,6 +1,6 @@
 {
     "hosting": {
-      "target": "custom",
+      "target": "lc",
       "public": "dist",
       "ignore": [
         "firebase.json",

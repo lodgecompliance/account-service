@@ -9,7 +9,7 @@ const state = {
         auth: null,
         profile: null,
         business: null,
-        admin: null
+        admin: null,
     },
     error: {
         show: false,

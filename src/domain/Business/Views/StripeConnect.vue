@@ -28,10 +28,11 @@ import AppLayer from '@/AppLayer';
 import DataContainer from '@/components/DataContainer.vue';
 import current_business from "@/domain/Business/Mixins/current_business";
 import business from "@/domain/Business/Mixins/business";
+import integration from "@/domain/Business/Mixins/integration";
 
 export default {
   name: 'BusinessStripeConnectCallback',
-  mixins: [current_business, business],
+  mixins: [current_business, business, integration],
   components: {
     AppLayer, DataContainer
   },
@@ -71,7 +72,7 @@ export default {
         this.SET_MODE(this.businessId)
       }
       this.loading = true;
-      this.authorizeBusinessStripeIntegration(this.businessId, this.integrationId, this.callbackCode)
+      this.connectBusinessStripeIntegration(this.businessId, this.integrationId, this.callbackCode)
       .then(authResponse => {
         window.localStorage.removeItem('stripe-connect-business-id');
         window.localStorage.removeItem('stripe-connect-integration-id');
