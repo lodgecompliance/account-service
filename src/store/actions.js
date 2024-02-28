@@ -35,8 +35,6 @@ const actions = {
                 window.localStorage.removeItem('lc-user');
                 window.localStorage.removeItem('token-expires');
                 reject(e)
-            }).finally(() => {
-                dispatch('broadcastAuth')
             })
         })
     },
@@ -56,7 +54,6 @@ const actions = {
                 resolve(authentication)
             })
             .catch(e => reject(e))
-            .finally(() => dispatch('broadcastAuth'))
         })
 
     },
@@ -80,7 +77,6 @@ const actions = {
                     resolve(account);
                 })
                 .catch(e => reject(e))
-                .finally(() => dispatch('broadcastAuth'))
         })
     },
 
@@ -166,7 +162,7 @@ const actions = {
 
     syncAuthUser({ dispatch }) {
         return dispatch('getAuthUser')
-            .then(() => dispatch('getAuthUserAccount'));
+            .then(() => dispatch('getAuthUserAccount'))
     },
 
     /**

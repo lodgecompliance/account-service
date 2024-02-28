@@ -57,7 +57,7 @@
                 <v-btn
                     :loading="submitting"
                     :disabled="loading || !canSubmit"
-                    color="primary"
+                    color="primary" depressed
                     @click="submit()"
                 >
                   Continue
@@ -107,7 +107,6 @@ export default {
     computed: {
       ...mapGetters(['auth', 'authenticated', 'current_user']),
         authProviders() {
-          //return ['google', 'email', 'phone'];
           return appHelper.getAuthProviders()
         }
     },
@@ -152,7 +151,6 @@ export default {
         } else {
           this.loading = false
           this.isProfileSet = false;
-          this.$emit('completed', false)
         }
       },
 
