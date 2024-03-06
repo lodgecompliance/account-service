@@ -135,6 +135,7 @@ export default {
         ]),
 
       getAuth(){
+        this.loading = true;
         if(this.authenticated) {
           this.getAuthUserToken()
           .then(() => this.getAuthUserAccount())

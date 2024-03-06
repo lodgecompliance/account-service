@@ -57,7 +57,6 @@ export default gql`
                 title
                 text
                 time
-                timestamp
                 read
                 read_at
                 metadata {

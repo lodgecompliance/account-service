@@ -12,6 +12,7 @@ import UserProfile from "@/domain/User/Views/Profile.vue";
 import BusinessProfile from "@/domain/Business/Views/Profile.vue";
 import UserBusinesses from "@/domain/User/Views/Businesses.vue";
 import UserWallets from "@/domain/User/Views/Wallets.vue";
+import UserNotifications from "@/domain/User/Views/Notifications.vue";
 import BusinessUsers from "@/domain/Business/Views/Users.vue";
 import BusinessIntegrations from "@/domain/Business/Views/Integrations.vue";
 import BusinessStripeConnect from "@/domain/Business/Views/StripeConnect.vue";
@@ -81,6 +82,15 @@ const routes = [
     component: UserBusinesses,
     meta: {
       title: "Businesses"
+    },
+    beforeEnter: multiguard([middleware.auth])
+  },
+  {
+    path: '/notifications',
+    name: 'user.notifications',
+    component: UserNotifications,
+    meta: {
+      title: "Notifications"
     },
     beforeEnter: multiguard([middleware.auth])
   },

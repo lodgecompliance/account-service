@@ -98,16 +98,16 @@ export default {
             return new Promise((resolve, reject) => {
                 this.mutate({
                     mutation: gql `
-                                mutation updateUserAttribute($user_id: ID!, $data: [MetadataInput]!, $saveAsMetadata: Boolean) {
-                                  updateUserAttribute(user_id: $user_id, data: $data, saveAsMetadata: $saveAsMetadata) {
-                                    id
-                                    metadata {
-                                        key
-                                        value
-                                    }
-                                  }
-                                }
-                              `,
+                    mutation updateUserAttribute($user_id: ID!, $data: [MetadataInput]!, $saveAsMetadata: Boolean) {
+                      updateUserAttribute(user_id: $user_id, data: $data, saveAsMetadata: $saveAsMetadata) {
+                        id
+                        metadata {
+                            key
+                            value
+                        }
+                      }
+                    }
+                  `,
                     variables: { user_id, data, saveAsMetadata }
                 }).then(response => {
                     resolve(response.data.updateUserAttribute ? this.convertMetaKeyValueToObj(data) : {} );
@@ -126,7 +126,9 @@ export default {
                             title
                             text
                             time
-                            timestamp
+                            timestamp {
+                                created_at
+                            }
                             read
                             read_at
                             metadata {
