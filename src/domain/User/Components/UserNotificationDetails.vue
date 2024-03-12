@@ -102,7 +102,9 @@
                         body
                         text
                         time
-                        timestamp
+                        timestamp {
+                          created_at
+                        }
                         read
                         read_at
                         metadata {
