@@ -103,6 +103,7 @@ export default {
                   phone
                   address
                   rules
+                  currency
                   term_url
                   status
                   image

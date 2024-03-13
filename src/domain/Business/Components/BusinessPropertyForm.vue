@@ -118,6 +118,13 @@
         }"
               />
 
+              <property-currency-select
+                  outlined
+                  label="Currency"
+                  v-model="form.currency"
+                  dense
+              />
+
               <v-textarea
                   v-model="form.rules"
                   dense
@@ -192,11 +199,13 @@ import BusinessIntegrationSelect from "@/domain/Business/Components/BusinessInte
 import business from "@/domain/Business/Mixins/business";
 import AvatarForm from "@/components/AvatarForm.vue";
 import FileUpload from "@/components/FileUpload.vue";
+import PropertyCurrencySelect from "@/domain/Business/Components/PropertyCurrencySelect.vue";
 
 export default {
   name: "BusinessPropertyForm",
   mixins:[form, business, property],
   components: {
+    PropertyCurrencySelect,
     FileUpload,
     AvatarForm,
     BusinessIntegrationSelect,
@@ -242,6 +251,7 @@ export default {
         phone: property.phone || null,
         address: property.address || null,
         rules: property.rules || null,
+        currency: property.currency || null,
         term_url: property.term_url || null,
         image: property.image || null,
         cover_image: property.cover_image || null,

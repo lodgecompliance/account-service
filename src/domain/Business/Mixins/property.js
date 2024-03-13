@@ -32,6 +32,21 @@ export default {
             })
         },
 
+        getPropertyCurrencies() {
+            return new Promise((resolve, reject) => {
+                this.query({
+                    domain: config.apollo.gr,
+                    query: gql`
+                      query getPropertyCurrencies {
+                        getPropertyCurrencies
+                      }
+                    `
+                })
+                .then(response => resolve(response.data.getPropertyCurrencies || []))
+                .catch(e => reject(e))
+            })
+        },
+
         createBusinessProperty(business_id, data) {
             return new Promise((resolve, reject) => {
                 this.mutate({
@@ -44,6 +59,7 @@ export default {
                           phone
                           address
                           rules
+                          currency
                           term_url
                           status
                           image
@@ -82,6 +98,7 @@ export default {
                           phone
                           address
                           rules
+                          currency
                           term_url
                           status
                           image
