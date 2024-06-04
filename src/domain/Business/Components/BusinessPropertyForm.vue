@@ -46,7 +46,16 @@
       <div class="d-flex align-center">
 
         <div class="ml-2">
-          <div>{{ property.name }}</div>
+          <div class="flex">
+            {{ property.name }}
+            <v-btn
+                class="ml-2"
+                :href="`${$store.getters.domains.host}/${property.id}`"
+                target="_blank" icon
+            >
+              <v-icon small>mdi-open-in-new</v-icon>
+            </v-btn>
+          </div>
           <small class="grey--text">{{ property.address }}</small>
         </div>
       </div>

@@ -41,7 +41,10 @@
 
       <template v-slot:item.action="{ item }">
         <v-btn icon @click="property = item">
-          <v-icon>mdi-eye</v-icon>
+          <v-icon small>mdi-eye</v-icon>
+        </v-btn>
+        <v-btn :href="`${$store.getters.domains.host}/${item.id}`" icon>
+          <v-icon small>mdi-open-in-new</v-icon>
         </v-btn>
       </template>
 
@@ -62,6 +65,7 @@ import ItemStatus from "@/components/ItemStatus.vue";
 import ErrorHandler from "@/components/ErrorHandler.vue";
 import BusinessPropertyDialog from "@/domain/Business/Widgets/PropertyDialog.vue";
 import business from "@/domain/Business/Mixins/business";
+import config from "@/config";
 export default {
   name: 'BusinessProperties',
   mixins:[business],

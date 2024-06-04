@@ -6,6 +6,12 @@ export default {
         mode: process.env.NODE_ENV
     },
 
+    domains: {
+        host: process.env.VUE_APP_DOMAIN_HOST,
+        ledger: process.env.VUE_APP_DOMAIN_LEDGER,
+        checkin: process.env.VUE_APP_DOMAIN_CHECKIN
+    },
+
     google: {
         api_key: process.env.VUE_APP_GOOGLE_API_KEY,
     },

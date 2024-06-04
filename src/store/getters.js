@@ -1,3 +1,5 @@
+import config from "@/config";
+
 const getters = {
     error : state => state.error,
     app_ready: state => state.app_ready,
@@ -13,6 +15,7 @@ const getters = {
     is_admin: state => !!state.current_user?.profile?.auth?.is_admin,
     is_super_admin: state => !!state.current_user?.profile?.auth?.is_super_admin,
     system: state => state.system || {},
+    domains: state => config.domains,
 }
 
 export default getters

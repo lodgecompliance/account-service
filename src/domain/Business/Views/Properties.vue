@@ -17,7 +17,7 @@
         </business-property-dialog>
       </v-col>
     </v-row>
-      <business-properties :search="search" :business="currentBusiness" ref="properties" />
+    <business-properties :search="search" :business="currentBusiness" ref="properties" />
   </business-profile-page>
 </template>
 
