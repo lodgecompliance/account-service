@@ -3,16 +3,16 @@ import ApolloClient from "apollo-client";
 import { HttpLink } from "apollo-link-http";
 import { onError, ErrorResponse } from "apollo-link-error";
 import { InMemoryCache } from "apollo-cache-inmemory";
-import gr_tokens from './graphql-tokens'
+import LCToken from './graphql-tokens'
 export default async (uri,onNetworkError = () => {}, onGraphQlError = () => {}) => {
-    const tokens = await gr_tokens();
+    const tokens = await LCToken();
     // Create an http link:
     const httpLink = new HttpLink({
     uri,
     fetch,
     headers: {
         'LC-CLIENT-TOKEN': tokens.client,
-        'LC-USER-TOKEN': tokens.user
+        'LC-USER-TOKEN': tokens.user,
       }
     });
   

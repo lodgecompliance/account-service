@@ -88,7 +88,7 @@
 
         methods: {
           businessUpdate(update) {
-            if(update.id === this.currentBusiness.id) {
+            if(update.id === this.currentBusiness?.id) {
               this.businessUpdated(update)
             } else {
               this.SNACKBAR({

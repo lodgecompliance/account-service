@@ -5,6 +5,7 @@ import GET_AUTH_USER_ACCOUNT from '@/domain/Auth/Queries/getUserAccount';
 import GET_SYSTEM_PARAMS from '@/graphql/query/getSystemParam'
 import config from "@/config";
 import helper from "@/helper";
+import { TokenManager } from "@/auth-token";
 
 const actions = {
     broadcast({ getters }, data) {
@@ -12,28 +13,23 @@ const actions = {
     },
 
     broadcastAuth({ dispatch, getters }) {
-        const token = window.localStorage.getItem("lc-user");
-        const expires = window.localStorage.getItem('token-expires')
         dispatch('broadcast', {
             type: 'auth',
-            status: auth.currentUser && token ? 'signedin' : 'signedout',
-            token: token,
-            expires: expires,
+            status: auth.currentUser && !TokenManager.tokenExpired() ? 'signedin' : 'signedout',
+            token: TokenManager.getRawToken(),
             profile: getters.current_user.profile
         })
     },
 
-    getAuthUserToken({ dispatch, commit }){
+    getAuthUserToken({ dispatch, commit }, force_refresh = false){
         return new Promise((resolve, reject) => {
-            auth.currentUser.getIdTokenResult(true)
+            auth.currentUser.getIdTokenResult(force_refresh)
             .then(tokenResult => {
-                window.localStorage.setItem('lc-user', tokenResult.token);
-                window.localStorage.setItem('token-expires', tokenResult.expirationTime);
+                TokenManager.setToken(tokenResult)
                 return dispatch('getAuthUser')
             }).then(() => resolve(true))
             .catch(e => {
-                window.localStorage.removeItem('lc-user');
-                window.localStorage.removeItem('token-expires');
+                TokenManager.clearToken()
                 reject(e)
             })
         })
@@ -80,71 +76,37 @@ const actions = {
         })
     },
 
-    query({commit, dispatch}, { domain = config.apollo.account, query, variables }){
-        let error = null;
-        const runQuery = () => {
-            return _apollo(domain, (e) => {
-                error = e;
-            }, (e) => {
-                    error = e;
-                }
-            ).then(apollo => {
-                return apollo.client.query({
-                    query, variables
-                })
-            })
-        }
-
+    runQuery({commit, dispatch}, query) {
         return new Promise((resolve, reject) => {
-            runQuery().then(response => {
-                resolve(response)
-            })
-            .catch(e => {
-                //refresh token and retry
-                if(error && error.response && error.response.status === 401) {
-                    console.log("Retrying after refreshing ID token...");
-                    dispatch('getAuthUserToken').then(() => runQuery())
-                    .then(response => resolve(response))
-                    .catch(e => reject(e))
+            _apollo(query.domain || config.apollo.account,(e) => {
+                    const error = e.result;
+                }, (e) => {
+                    console.log('GraphQL Error-->', e);
                 }
-                console.log("error---->", error)
-                if(error) return reject(error.result ? error.result : error);
-                return reject(e);
-            })
-
+            )
+            .then(apollo =>  apollo.client.query(query))
+            .then(response =>  resolve(response))
+            .catch(e =>  reject(e))
         });
-        
+    },
+
+
+    query({commit, dispatch}, { domain = config.apollo.account, query, variables }){
+        return _apollo(domain,(e) => {
+                console.log('Network Error-->', e);
+            }, (e) => {
+                console.log('GraphQL Error-->', e);
+            }
+        ).then(apollo =>  apollo.client.query({ query, variables }))
     },
     
     mutate({commit, dispatch}, { domain = config.apollo.account, mutation, variables}){
-        let error = null;
-        const runMutation = () => {
-            return _apollo(domain,(e) => {
-                    error = e.result ? e.result : null;
-                }, (e) => {
-                    error = e;
-                }
-            ).then(apollo => {
-                return apollo.client.mutate({
-                    mutation, variables
-                })
-            })
-        }
-        return new Promise((resolve, reject) => {
-            runMutation().then(response => resolve(response))
-            .catch(e => {
-                //refresh token and retry
-                if(error && error.response && error.response.status === 401) {
-                    console.log("Retrying after refreshing ID token...");
-                    dispatch('getAuthUserToken').then(() => runMutation())
-                        .then(response => resolve(response))
-                        .catch(e => reject(e))
-                }
-                if(error?.result) return reject(error.result)
-                return reject(e);
-            })
-
-        })
+        return _apollo(domain,(e) => {
+                console.log('Network Error-->', e);
+            }, (e) => {
+                console.log('GraphQL Error-->', e);
+            }
+        ).then(apollo =>  apollo.client.mutate({ mutation, variables }))
     },
 
     getSystemParams({ commit, dispatch }) {
@@ -173,8 +135,7 @@ const actions = {
             auth.signOut()
             .then(() => {
                 commit('UNSET_CURRENT_USER');
-                window.localStorage.removeItem('lc-user');
-                window.localStorage.removeItem('token-expires');
+                TokenManager.clearToken()
                 resolve()
             })
             .catch(e =>  reject(e))

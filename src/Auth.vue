@@ -51,9 +51,6 @@ export default {
         window.location.replace(this.$route.query.referer);
       }
     },
-    signUserOut() {
-      this.signout()
-    }
   },
 }
 </script>

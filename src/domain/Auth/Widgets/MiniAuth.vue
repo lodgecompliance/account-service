@@ -39,7 +39,7 @@
 
             </div>
         </template>
-        <template v-else-if="!isProfileSet">
+        <template v-else-if="!current_user.profile">
             <slot name="before-profile-set" />
             <personal-info-form
               flat
@@ -67,9 +67,12 @@
           </personal-info-form>
         </template>
     </div>
-    <div v-if="authenticated && isProfileSet" class="text-center">
-      <h4 class="grey--text">Authenticated as</h4>
-      <small>{{ current_user.profile.full_name }}</small>
+    <div v-if="authenticated && current_user.profile" class="text-center">
+      <div>
+        <h4 class="grey--text">Authenticated as</h4>
+        <small>{{ current_user.profile.full_name }}</small>
+      </div>
+      <v-btn color="primary" depressed small @click="$emit('completed', true)">Continue</v-btn>
     </div>
   </div>
 </template>
@@ -88,6 +91,7 @@ import DataContainer from "@/components/DataContainer";
 import { auth } from "@/firebase";
 import appHelper from "@/helper/app";
 import config from "@/config";
+import {TokenManager} from "@/auth-token";
 
 export default {
     name: 'MiniAuth',
@@ -127,7 +131,6 @@ export default {
             'getAuthUserToken',
             'getAuthUserAccount',
             'signout',
-            'broadcastAuth'
         ]),
         ...mapMutations([
             'SET_AUTH',
@@ -140,8 +143,7 @@ export default {
           this.getAuthUserToken()
           .then(() => this.getAuthUserAccount())
           .then(() => {
-            this.isProfileSet = !!this.current_user.profile;
-            if(this.isProfileSet) this.$emit('completed', true);
+            if(this.current_user.profile) this.$emit('completed', true);
           })
           .catch(e => {
             this.error = e
@@ -151,7 +153,6 @@ export default {
           })
         } else {
           this.loading = false
-          this.isProfileSet = false;
         }
       },
 
@@ -160,13 +161,7 @@ export default {
       },
 
       profileCompleted() {
-        this.isProfileSet = true;
-        this.broadcastAuth();
         this.$emit("completed", true);
-      },
-
-      signUserOut() {
-        this.signout()
       }
     },
 
@@ -189,7 +184,7 @@ export default {
               this.getAuth()
               break;
             case 'signout':
-              this.signUserOut()
+              this.signout()
               break;
           }
         }

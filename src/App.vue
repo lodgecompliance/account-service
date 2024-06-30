@@ -114,12 +114,12 @@
 import {mapActions, mapMutations, mapGetters} from 'vuex'
 import NavDrawer from '@/components/NavDrawer.vue';
 import { auth } from './firebase';
-import helper from '@/helper';
 import update from './mixins/update';
 import config from './config';
 import ModeSwitch from "@/components/ModeSwitch";
 import ConfirmationDialog from "@/components/Utilities/ConfirmationDialog.vue";
 import HeaderNotifications from "@/components/HeaderNotifications.vue";
+import {TokenManager} from "@/auth-token";
 
 export default {
   name: 'App',
@@ -176,17 +176,10 @@ export default {
       setUser(){
           this.error = null;
           this.SET_APP_STATE(false);
-          if(
-              window.localStorage.getItem('lc-user')
-              && window.localStorage.getItem('token-expires') > helper.nowTimestamp()
-              && this.auth
-              && this.current_user.profile
-          )
-          {
+          if(this.authenticated && !TokenManager.tokenExpired() && this.current_user.profile) {
             this.SET_APP_STATE(true);
             return;
-          }
-          else if(!this.auth){
+          } else if(!this.authenticated){
             this.signUserOut()
             return;
           }

@@ -3,21 +3,15 @@
   */
 import { auth } from './firebase';
 import config from './config';
-import moment from "moment";
+import { TokenManager } from "@/auth-token"
 
 export default async () => {
   const token = {
     client : `Bearer ${config.apollo.client_key}`,
-    user: `Bearer ${window.localStorage.getItem('lc-user')}`
+    user: `Bearer ${TokenManager.getToken()}`
   }
-  if(window.localStorage.getItem('lc-user')
-      && auth.currentUser
-      && moment(window.localStorage.getItem('token-expires')).isSameOrBefore(moment())
-  ){
-    const tokenResult = await auth.currentUser.getIdTokenResult(true);
-    window.localStorage.setItem('lc-user', tokenResult.token);
-    window.localStorage.setItem('token-expires', tokenResult.expirationTime);
-    token.user = `Bearer ${tokenResult.token}`;
+  if(TokenManager.getToken() && TokenManager.tokenExpired() && auth.currentUser){
+    token.user = `Bearer ${await TokenManager.refreshToken()}`;
   }
   return token;
  }
