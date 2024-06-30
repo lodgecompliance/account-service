@@ -58,6 +58,7 @@ export default {
           this.$emit('synced', verification)
         }).catch(e => this.error = e).finally(() => this.loading = false )
       },
+
       determineProvider(verification) {
         if(["NG"].includes(verification.country)) {
           this.provider = "smile";

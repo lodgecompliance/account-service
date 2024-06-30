@@ -332,13 +332,13 @@ export default {
       if(!this.$refs.form.validate()) return Promise.resolve();
       if(!this.form.id_image) return Promise.reject(new Error("Upload your "+this.form.id_type))
       return new Promise((resolve, reject) => {
-          if(!this.form.id_image) throw new Error("Upload your "+this.form.id_type);
-          this.saveUserIdVerification(this.form)
-            .then(id => {
-              this.$emit("saved", id);
-              resolve(id);
-            })
-            .catch(e => reject(e))
+        if(!this.form.id_image) throw new Error("Upload your "+this.form.id_type);
+        this.saveUserIdVerification(this.form)
+          .then(id => {
+            this.$emit("saved", id);
+            resolve(id);
+          })
+          .catch(e => reject(e))
       })
     },
   },

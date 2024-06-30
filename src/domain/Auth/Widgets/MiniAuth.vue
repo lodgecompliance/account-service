@@ -2,7 +2,7 @@
   <div>
     <data-container :loading="loading" :error="error"/>
     <div v-show="!loading">
-        <template v-if="!authenticated">
+        <template v-if="step === 'authenticate'">
             <slot name="before-authentication" />
             <div class="d-flex flex-wrap align-center justify-center">
                 <google-signin v-if="authProviders.includes('google') && providers.includes('google')"
@@ -39,7 +39,7 @@
 
             </div>
         </template>
-        <template v-else-if="!current_user.profile">
+        <template v-if="step === 'profile-set'">
             <slot name="before-profile-set" />
             <personal-info-form
               flat
@@ -66,13 +66,39 @@
             </template>
           </personal-info-form>
         </template>
+        <template v-if="step === 'id-verification'">
+          <slot name="before-id-verification" />
+          <id-verification-form
+              flat
+              :user="profile"
+              :verification="profile.id_verification"
+              @saved="idVerificationUpdated"
+          >
+            <template #actions="{ loading, submitting, submit, canSubmit }">
+              <v-card-actions>
+                <v-btn
+                    :loading="submitting"
+                    :disabled="loading || !canSubmit"
+                    color="primary" depressed
+                    @click="submit()" block>
+                  Save Changes
+                </v-btn>
+              </v-card-actions>
+            </template>
+          </id-verification-form>
+        </template>
     </div>
-    <div v-if="authenticated && current_user.profile" class="text-center">
+    <div v-if="authenticated && profile" class="text-center">
       <div>
         <h4 class="grey--text">Authenticated as</h4>
-        <small>{{ current_user.profile.full_name }}</small>
+        <small>{{ profile.full_name }}</small>
       </div>
-      <v-btn color="primary" depressed small @click="$emit('completed', true)">Continue</v-btn>
+      <v-btn v-if="completed"
+             color="primary"
+             depressed small
+             @click="$emit('completed', true)">
+        Continue
+      </v-btn>
     </div>
   </div>
 </template>
@@ -91,18 +117,21 @@ import DataContainer from "@/components/DataContainer";
 import { auth } from "@/firebase";
 import appHelper from "@/helper/app";
 import config from "@/config";
-import {TokenManager} from "@/auth-token";
+import IdVerificationForm from "@/domain/User/Components/IdVerificationForm.vue";
 
 export default {
     name: 'MiniAuth',
     components: {
+      IdVerificationForm,
       PersonalInfoForm,
-        GoogleSignin, EmailSignin, PhoneSignin, DataContainer
+      GoogleSignin, EmailSignin,
+      PhoneSignin, DataContainer
     },
     mixins: [profileMixin],
     props: {
-        continueTo: String,
-        providers: {
+      continueTo: String,
+      idVerificationRequired: Boolean,
+      providers: {
             type: Array,
             default: () => ['google', 'email', 'phone']
         }
@@ -112,6 +141,19 @@ export default {
       ...mapGetters(['auth', 'authenticated', 'current_user']),
         authProviders() {
           return appHelper.getAuthProviders()
+        },
+        step() {
+          if(!this.authenticated) return 'authenticate';
+          if(this.authenticated && !this.profile) return 'profile-set';
+          if(this.idVerificationRequired && this.profile) return 'id-verification';
+          return null;
+        },
+        completed() {
+          let completed = this.authenticated && !!this.profile;
+          if(this.idVerificationRequired) {
+            completed = completed && !!this.profile?.id_verification
+          }
+          return completed;
         }
     },
 
@@ -122,7 +164,8 @@ export default {
             rules: formvalidation.rules,
             error: null,
             profileComponentKey: 1,
-            profileComponentForm: null
+            profileComponentForm: null,
+            idVerification: null,
         }
     },
     
@@ -142,9 +185,6 @@ export default {
         if(this.authenticated) {
           this.getAuthUserToken()
           .then(() => this.getAuthUserAccount())
-          .then(() => {
-            if(this.current_user.profile) this.$emit('completed', true);
-          })
           .catch(e => {
             this.error = e
           })
@@ -161,9 +201,22 @@ export default {
       },
 
       profileCompleted() {
-        this.$emit("completed", true);
+      },
+
+      idVerificationUpdated(verification) {
+        this.$store.commit('SET_USER_PROFILE_KEYS', { id_verification: verification })
       }
+
     },
+
+  watch: {
+      completed: {
+        immediate: true,
+        handler(c) {
+          if(c) this.$emit('completed', c)
+        }
+      }
+  },
 
     created() {
       this.loading = true;
@@ -184,6 +237,7 @@ export default {
               this.getAuth()
               break;
             case 'signout':
+              console.log('gonna signout')
               this.signout()
               break;
           }

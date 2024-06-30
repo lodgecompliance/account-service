@@ -19,6 +19,7 @@ import BusinessStripeConnect from "@/domain/Business/Views/StripeConnect.vue";
 import BusinessProperties from "@/domain/Business/Views/Properties.vue";
 import BusinessWallets from "@/domain/Business/Views/Wallets.vue";
 import BusinessCreditCards from "@/domain/Business/Views/CreditCards.vue";
+import Signout from "@/domain/Auth/Views/Signout.vue";
 
 Vue.use(VueRouter)
 
@@ -40,6 +41,11 @@ const routes = [
     name: 'signin',
     component: Signin,
     beforeEnter: multiguard([middleware.guest])
+  },
+  {
+    path: '/signout',
+    name: 'signout',
+    component: Signout,
   },
   {
     path: '/verify-email',

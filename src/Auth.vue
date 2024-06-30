@@ -6,12 +6,17 @@
           <div class="text-center py-10">
             <img src="@/assets/img/app-logo.png" width="200px"  alt="Lode Compliance"/>
           </div>
-          <mini-auth @completed="authCompleted">
+          <mini-auth
+              :id-verification-required="['true', '1'].includes($route.query.idVerification)"
+              @completed="authCompleted">
             <template #before-authentication>
               <h4 class="text-center">Sign in with one the following options before proceeding</h4>
             </template>
             <template #before-profile-set>
               <h4 class="text-center">Complete your profile</h4>
+            </template>
+            <template #before-id-verification>
+              <h4 class="text-center">Complete your ID verification</h4>
             </template>
           </mini-auth>
         </div>
@@ -46,10 +51,8 @@ export default {
     ]),
 
     authCompleted(authenticated) {
-      this.broadcastAuth()
-      if(!this.inFrame && this.$route.query.referer) {
-        window.location.replace(this.$route.query.referer);
-      }
+      if(this.inFrame) this.broadcastAuth()
+      else if(this.$route.query.referer) window.location.replace(this.$route.query.referer);
     },
   },
 }

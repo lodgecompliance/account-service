@@ -198,7 +198,7 @@ export default {
         this.SET_APP_STATE(false);
         this.signout()
         .then(() => {
-          if(this.$route.name !== 'signin'){
+          if(!["signin", "signout"].includes(this.$route.name)) {
               this.$router.push({ name: 'signin' });
             }
             this.SET_APP_STATE(true);
