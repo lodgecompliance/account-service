@@ -4,7 +4,7 @@ import { HttpLink } from "apollo-link-http";
 import { onError, ErrorResponse } from "apollo-link-error";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import LCToken from './graphql-tokens'
-export default async (uri,onNetworkError = () => {}, onGraphQlError = () => {}) => {
+export default async (uri, onNetworkError = () => {}, onGraphQlError = () => {}) => {
     const tokens = await LCToken();
     // Create an http link:
     const httpLink = new HttpLink({
