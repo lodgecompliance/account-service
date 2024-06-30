@@ -76,21 +76,6 @@ const actions = {
         })
     },
 
-    runQuery({commit, dispatch}, query) {
-        return new Promise((resolve, reject) => {
-            _apollo(query.domain || config.apollo.account,(e) => {
-                    const error = e.result;
-                }, (e) => {
-                    console.log('GraphQL Error-->', e);
-                }
-            )
-            .then(apollo =>  apollo.client.query(query))
-            .then(response =>  resolve(response))
-            .catch(e =>  reject(e))
-        });
-    },
-
-
     query({commit, dispatch}, { domain = config.apollo.account, query, variables }){
         return _apollo(domain,(e) => {
                 console.log('Network Error-->', e);
@@ -132,14 +117,14 @@ const actions = {
      */
     signout({commit, dispatch}){
        return new Promise((resolve, reject) => {
-            auth.signOut()
-            .then(() => {
-                commit('UNSET_CURRENT_USER');
-                TokenManager.clearToken()
-                resolve()
-            })
-            .catch(e =>  reject(e))
-            .finally(() => dispatch('broadcastAuth'))
+        auth.signOut()
+        .then(() => {
+            commit('UNSET_CURRENT_USER');
+            TokenManager.clearToken()
+            resolve()
+        })
+        .catch(e =>  reject(e))
+        .finally(() => dispatch('broadcastAuth'))
        })
       }
 }
