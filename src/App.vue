@@ -28,20 +28,32 @@
 
     <!-- Sizes your content based upon application components -->
     <v-main v-if="app_ready">
+
+      <div v-if="app_layout === 'plain'"
+           class="mt-10 mb-5 text-center">
+        <router-link :to="{ name: 'home' }">
+          <img src="@/assets/img/app-logo.png" width="200" alt="Lodge Compliance">
+        </router-link>
+      </div>
+
       <router-view></router-view>
-      <div v-if="app_layout === 'plain' && authenticated" class="text-center mb-16">
+
+      <div v-if="app_layout === 'plain' && authenticated"
+           class="text-center mb-16"
+      >
         <div v-if="auth" >
           <small class="grey--text">signed in as {{ auth.email }}</small>
         </div>
-        <v-btn text color="primary" @click="signUserOut" >
+        <v-btn text color="primary" @click="$refs.confirmSignout.open()" >
           Sign out
         </v-btn>
       </div>
+
     </v-main>
     <v-main v-else>
       <div  class="d-flex justify-center align-center" style="height: 80vh">
           <div v-if="!error" class="text-center">
-              <img src="@/assets/img/app-logo.png" width="200px" class="loader" />
+              <img src="@/assets/img/app-logo.png" width="200px" class="loader"  alt="Loading..."/>
               <p class="grey--text mt-5">{{app_process}}</p>
           </div>
           <div v-else class="text-center">
@@ -103,7 +115,6 @@
       <v-spacer></v-spacer>
       <v-btn x-small @click="reloadApp" title="Reload app" icon><v-icon>mdi-refresh</v-icon></v-btn>
     </v-footer>
-
     <div data-dialog="corner"></div>
   </v-app>
 
@@ -222,7 +233,7 @@ export default {
       $route: {
         immediate: true,
         handler(route) {
-          const plainLayoutRoutes = ["signin", "onboard"];
+          const plainLayoutRoutes = ["signin", "onboard", "shared.profile"];
           this.$store.commit('SET_APP_LAYOUT', plainLayoutRoutes.includes(route.name) ? 'plain' : 'full')
           this.$store.commit('SET_CURRENT_PAGE', { title: route.meta.title  });
         }

@@ -1,25 +1,18 @@
 <template>
   <user-profile-page>
-    <id-verification-form
-        flat
-        :key="version"
-        :user="profile"
-        :verification="profile.id_verification"
-        @update="version++"
-        @saved="idVerificationUpdated"
-    >
-      <template #actions="{ loading, submitting, submit, canSubmit }">
-        <v-card-actions>
-          <v-btn
-              :loading="submitting"
-              :disabled="loading || !canSubmit"
-              color="primary" depressed
-              @click="submit()" block>
-            Save Changes
-          </v-btn>
-        </v-card-actions>
-      </template>
-    </id-verification-form>
+    <v-row justify="center">
+      <v-col cols="12" md="6">
+        <id-verification-form
+            flat
+            :key="version"
+            :user="profile"
+            :verification="profile.id_verification"
+            @update="version++"
+            @saved="idVerificationUpdated"
+        >
+        </id-verification-form>
+      </v-col>
+    </v-row>
   </user-profile-page>
 </template>
 

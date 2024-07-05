@@ -79,6 +79,7 @@ export default {
         },
 
         idVerificationUpdated(id_verification) {
+            id_verification = { ...this.idVerification, ...id_verification }
             this.SET_USER_PROFILE_KEYS({ id_verification });
             this.SNACKBAR({
                 status: true,

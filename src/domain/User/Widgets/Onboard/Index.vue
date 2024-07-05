@@ -11,8 +11,7 @@
           <h2>{{ steps.personalInfo.title }}</h2>
           <p class="grey--text">{{ steps.personalInfo.description }}</p>
           </div>
-          <component
-              :is="steps.personalInfo.component.name"
+          <personal-info
               :key="steps.personalInfo.component.version"
               :pendingUser="pendingUser"
               @update="steps.personalInfo.component.version++"
@@ -21,20 +20,18 @@
           <template #actions="{ loading, submitting, submit }">
               <v-card-actions>
               <v-spacer></v-spacer>
-  <!--                    <v-btn text @click="cancelOnboarding">-->
-  <!--                      Cancel-->
-  <!--                    </v-btn>-->
               <v-btn
                   :loading="submitting"
                   :disabled="loading"
                   color="primary"
                   @click="submit()"
+                  depressed
               >
                   Continue
               </v-btn>
               </v-card-actions>
           </template>
-          </component>
+          </personal-info>
       </template>
 
       <template #accountType="{ previousStep, nextStep, isFirstStep, isLastStep,  stepCompleted }">
@@ -42,8 +39,7 @@
             <h2>{{ steps.accountType.title }}</h2>
             <p class="grey--text">{{ steps.accountType.description }}</p>
           </div>
-          <component
-              :is="steps.accountType.component.name"
+          <account-type
               :key="steps.accountType.component.version"
               :pendingUser="pendingUser"
               @update="steps.accountType.component.version++"
@@ -66,12 +62,13 @@
                   :disabled="loading"
                   color="primary"
                   @click="submit()"
+                  depressed
               >
                   Continue
               </v-btn>
               </v-card-actions>
           </template>
-          </component>
+          </account-type>
       </template>
 
       <template #idVerification="{ previousStep, nextStep, isFirstStep, isLastStep,  stepCompleted }">
@@ -79,13 +76,12 @@
               <h2>{{ steps.idVerification.title }}</h2>
               <p class="grey--text">{{ steps.idVerification.description }}</p>
           </div>
-          <component
-              :is="steps.idVerification.component.name"
+          <id-verification
               :key="steps.idVerification.component.version"
               @update="steps.idVerification.component.version++"
               @completed="stepCompleted"
           >
-              <template #actions="{ loading, submitting, submit }">
+              <template #actions="{ verified }">
               <v-card-actions>
                   <v-btn
                       v-if="!isFirstStep"
@@ -98,16 +94,15 @@
                   </v-btn>
                   <v-spacer></v-spacer>
                   <v-btn
-                      :loading="submitting"
-                      :disabled="loading"
                       color="primary"
-                      @click="submit()"
+                      @click="nextStep"
+                      depressed
                   >
-                  Continue
+                    {{ verified ? 'Continue' : 'Skip For Now' }}
                   </v-btn>
               </v-card-actions>
               </template>
-          </component>
+          </id-verification>
       </template>
 
       <template #businessInfo="{ previousStep, nextStep, isFirstStep, isLastStep,  stepCompleted }">
@@ -115,8 +110,7 @@
             <h2>{{ steps.businessInfo.title }}</h2>
             <p class="grey--text">{{ steps.businessInfo.description }}</p>
           </div>
-          <component
-              :is="steps.businessInfo.component.name"
+          <business-details
               :key="steps.businessInfo.component.version"
               @update="steps.businessInfo.component.version++"
               @completed="stepCompleted"
@@ -143,16 +137,24 @@
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn
+                    color="primary"
+                    @click="stepCompleted"
+                    text
+                >
+                  Skip
+                </v-btn>
+                <v-btn
                     :loading="submitting"
                     :disabled="loading"
                     color="primary"
                     @click="submit()"
+                    depressed
                 >
-                  Continue
+                  Submit
                 </v-btn>
               </v-card-actions>
             </template>
-          </component>
+          </business-details>
       </template>
 
     </stepper>
@@ -172,7 +174,7 @@
         },
         data(){
             return {
-              stepIndex: ["personalInfo", "accountType", "idVerification"],
+              stepIndex: ["personalInfo", "idVerification", "businessInfo"],
               steps: {
                 personalInfo: {
                   title: "Personal Info",
@@ -192,15 +194,15 @@
                 },
                 idVerification: {
                   title: "ID Verification",
-                  description: "Kindly verify your identity by using anyone of these",
+                  description: "Kindly verify your identity",
                   component: {
                     name: "id-verification",
                     version: 1
                   },
                 },
                 businessInfo: {
-                  title: "Business Details",
-                  description: "Select document type",
+                  title: "Create Business",
+                  description: "Create a business",
                   component: {
                     name: "business-details",
                     version: 1
@@ -216,14 +218,14 @@
 
         methods: {
           onResult({ result, lastStep }) {
-            if(lastStep) return;
-            const businessInfo = "businessInfo"
-            const businessStepIndex = this.stepIndex.findIndex(i => i === businessInfo)
-            if(result.accountType === "business") {
-              if(businessStepIndex < 0) this.stepIndex.push(businessInfo)
-            } else {
-               if(businessStepIndex >= 0) this.stepIndex.splice(businessStepIndex,1);
-            }
+            // if(lastStep) return;
+            // const businessInfo = "businessInfo"
+            // const businessStepIndex = this.stepIndex.findIndex(i => i === businessInfo)
+            // if(result.accountType === "business") {
+            //   if(businessStepIndex < 0) this.stepIndex.push(businessInfo)
+            // } else {
+            //    if(businessStepIndex >= 0) this.stepIndex.splice(businessStepIndex,1);
+            // }
           },
         }
     }

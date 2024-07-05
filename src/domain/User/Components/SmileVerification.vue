@@ -66,8 +66,8 @@ export default {
             this.submission = null;
             this.$store.dispatch('mutate', {
                 mutation: gql `
-                    mutation submitSmileVerification($user_id: ID!, $image_data: SmileVerificationInput!, $id_info: SmileIDInfoInput!, $metadata: MetadataInput) {
-                        submitSmileVerification(user_id: $user_id, image_data: $image_data, id_info: $id_info, metadata: $metadata) {
+                    mutation submitSmileVerification($user_id: ID!, $image_data: SmileVerificationInput!, $metadata: MetadataInput) {
+                        submitSmileVerification(user_id: $user_id, image_data: $image_data, metadata: $metadata) {
                             job_complete
                             job_success
                             result {
@@ -102,7 +102,8 @@ export default {
                 this.$emit('submitted',  this.submission);
             })
             .catch(e => {
-                this.error = e
+              this.error = e;
+              this.$emit('error');
             })
             .finally(() => {
                 this.submitting = false

@@ -13,13 +13,9 @@
               <h3>{{ profile.full_name }}</h3>
               <small v-if="profile.email" class="grey--text">{{ profile.email }}</small>
               <small v-else-if="profile.phone" class="grey--text">{{ profile.phone }}</small>
-              <div class="d-flex align-center">
-                <v-chip label class="text-capitalize" small>{{ profile.account_type }}</v-chip>
-              </div>
             </div>
           </div>
           <v-btn
-              v-if="profile.account_type === 'business'"
               @click="createBusiness = true" small text color="primary">
             <v-icon>mdi-plus</v-icon> Create Business
           </v-btn>

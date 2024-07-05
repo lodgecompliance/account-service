@@ -49,7 +49,7 @@
                 profileComponentForm = f;
                 profileComponentKey++
               }"
-              @saved="profileCompleted"
+              @saved="profileUpdated"
           >
             <template #actions="{ loading, submitting, submit, canSubmit }">
               <v-card-actions class="mt-5">
@@ -73,31 +73,24 @@
               :user="profile"
               :verification="profile.id_verification"
               @saved="idVerificationUpdated"
-          >
-            <template #actions="{ loading, submitting, submit, canSubmit }">
-              <v-card-actions>
-                <v-btn
-                    :loading="submitting"
-                    :disabled="loading || !canSubmit"
-                    color="primary" depressed
-                    @click="submit()" block>
-                  Save Changes
-                </v-btn>
-              </v-card-actions>
-            </template>
-          </id-verification-form>
+          />
         </template>
     </div>
-    <div v-if="authenticated && profile" class="text-center">
-      <div>
-        <h4 class="grey--text">Authenticated as</h4>
-        <small>{{ profile.full_name }}</small>
+    <div v-if="authenticated" class="text-center mt-5">
+      <div v-if="profile">
+        <small class="grey--text">Authenticated as</small>
+        <p>{{ profile.full_name }}</p>
       </div>
       <v-btn v-if="completed"
              color="primary"
              depressed small
              @click="$emit('completed', true)">
         Continue
+      </v-btn>
+      <v-btn v-if="authenticated" text color="red"
+             depressed small
+             @click="signout">
+        Signout
       </v-btn>
     </div>
   </div>
@@ -118,6 +111,7 @@ import { auth } from "@/firebase";
 import appHelper from "@/helper/app";
 import config from "@/config";
 import IdVerificationForm from "@/domain/User/Components/IdVerificationForm.vue";
+import current_user from "@/domain/User/Mixins/current_user";
 
 export default {
     name: 'MiniAuth',
@@ -127,7 +121,7 @@ export default {
       GoogleSignin, EmailSignin,
       PhoneSignin, DataContainer
     },
-    mixins: [profileMixin],
+    mixins: [profileMixin, current_user],
     props: {
       continueTo: String,
       idVerificationRequired: Boolean,
@@ -151,7 +145,9 @@ export default {
         completed() {
           let completed = this.authenticated && !!this.profile;
           if(this.idVerificationRequired) {
-            completed = completed && !!this.profile?.id_verification
+            const verification = this.profile?.id_verification;
+            completed = completed
+                && (verification?.[verification.provider]?.verified || verification?.manually_completed)
           }
           return completed;
         }
@@ -165,7 +161,6 @@ export default {
             error: null,
             profileComponentKey: 1,
             profileComponentForm: null,
-            idVerification: null,
         }
     },
     
@@ -202,10 +197,6 @@ export default {
 
       profileCompleted() {
       },
-
-      idVerificationUpdated(verification) {
-        this.$store.commit('SET_USER_PROFILE_KEYS', { id_verification: verification })
-      }
 
     },
 

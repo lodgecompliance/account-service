@@ -68,9 +68,9 @@
                 return new Promise((resolve, reject) => {
                     this.mutate({
                         variables: {
-                            user_id: this.current_user.auth.uid,
+                            user_id: this.auth.uid,
                             data: {...this.form, phone: this.trimedPhone}
-                        } ,
+                        },
                         mutation: this.current_user.profile ? UPDATE_USER : CREATE_USER,
                     })
                     .then(() => this.getAuthUserAccount())

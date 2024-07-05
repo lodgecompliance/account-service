@@ -20,6 +20,7 @@ import BusinessProperties from "@/domain/Business/Views/Properties.vue";
 import BusinessWallets from "@/domain/Business/Views/Wallets.vue";
 import BusinessCreditCards from "@/domain/Business/Views/CreditCards.vue";
 import Signout from "@/domain/Auth/Views/Signout.vue";
+import UserSharedProfile from "@/domain/User/Views/SharedProfile.vue";
 
 Vue.use(VueRouter)
 
@@ -35,6 +36,11 @@ const routes = [
     path: '/auth',
     name: 'auth',
     component: Auth,
+  },
+  {
+    path: '/shared-profile/:token',
+    name: 'shared.profile',
+    component: UserSharedProfile,
   },
   {
     path: '/signin',

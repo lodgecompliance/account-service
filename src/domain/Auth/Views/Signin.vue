@@ -3,11 +3,6 @@
       <v-row justify="center" style="min-height: 50vh" class="pt-16" >
         <v-col cols="12" sm="8" md="6" lg="4">
           <v-sheet class="pa-md-15 pa-5" color="white" rounded>
-            <div class="mb-16 text-center">
-              <router-link :to="{ name: 'home' }">
-                <img src="../../../assets/img/app-logo.png" width="190" alt="Lodge Compliance">
-              </router-link>
-            </div>
             <div class="text-center mb-10">
               <h1>Let's get started</h1>
               <p class="grey--text text-subtitle-2">Get started with the app by using any of the options</p>

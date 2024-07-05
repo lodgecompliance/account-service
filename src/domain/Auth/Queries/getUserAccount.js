@@ -15,6 +15,7 @@ export default gql`
             wallet_account_id
             id_verification {
                 user_id
+                provider
                 first_name
                 last_name
                 country
@@ -25,12 +26,14 @@ export default gql`
                     created_at
                     updated_at
                 }
+                manually_completed
                 stripe {
                     id
                     status
                     type
                     url
                     client_secret
+                    verified
                 }
                 smile {
                   ResultCode
@@ -49,6 +52,7 @@ export default gql`
                       Update_Registered_Selfie_On_File
                       Selfie_To_Registered_Selfie_Compare
                   }
+                  verified
                 }
             }
             notifications {

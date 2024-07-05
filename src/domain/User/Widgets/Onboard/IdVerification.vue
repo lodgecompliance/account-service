@@ -3,35 +3,41 @@
         :user="$store.getters.current_user.profile"
         :verification="verification" flat
         @saved="idVerificationSaved">
-      <template #actions="{ loading, submitting, submit }">
-        <slot name="actions" v-bind="{ loading, submitting, submit }"></slot>
+      <template #actions>
+        <slot name="actions" v-bind="{ verification, verified }" />
       </template>
     </id-verification-form>
 </template>
 
 <script>
-    import IdVerificationForm from "@/domain/User/Components/IdVerificationForm";
-    export default {
-        name: 'IdVerification',
-        components:{ IdVerificationForm },
-        data(){
-            return {};
-        },
+import { mapGetters } from "vuex";
+import IdVerificationForm from "@/domain/User/Components/IdVerificationForm";
+import current_user from "@/domain/User/Mixins/current_user";
+export default {
+  name: 'IdVerification',
+  mixins: [current_user],
+  components:{ IdVerificationForm },
+  data(){
+      return {};
+  },
 
-        computed: {
-            verification() {
-              return this.$store.getters.current_user.profile?.id_verification
-            }
-        },
-
-        methods: {
-          idVerificationSaved(id_verification) {
-            this.$store.commit('SET_USER_PROFILE_KEYS', { id_verification })
-            this.$emit('completed', id_verification)
-          }
-        }
+  computed: {
+    ...mapGetters(['current_user']),
+    verification() {
+      return this.current_user.profile?.id_verification
+    },
+    verified() {
+      return this.verification?.[this.verification.provider]?.verified
     }
-</script>
-<style>
+  },
 
-</style>
+  methods: {
+    idVerificationSaved(verification) {
+      this.idVerificationUpdated(verification)
+      if(this.verified) {
+        this.$emit('completed', verification)
+      }
+    }
+  }
+}
+</script>

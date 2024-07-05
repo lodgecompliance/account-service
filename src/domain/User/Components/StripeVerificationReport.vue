@@ -24,7 +24,7 @@
                 Verification Report
             </v-card-title>
             <v-card-text>
-                <data-container :loading="loading" :error="error" @retry="getUserStripeVerificationReport">
+                <data-container :loading="loading" :error="error">
                     <div v-if="report" class="mt-5">
                         <v-list>
                             <v-subheader>Document: {{ documentOptions.document_types | nullable }}</v-subheader>
@@ -137,9 +137,11 @@ export default
     },
 
     computed: {
+
         report() {
           return this.verification?.last_verification_report
         },
+
         document(){
             return this.report ? this.report.document : {}
         },
@@ -174,7 +176,7 @@ export default
     methods: {
         open(){
             if(!this.verification) return;
-            if(this.verification.metadata.user_id === this.$store.getters.current_user.auth.uid){
+            if(this.verification.metadata?.user_id === this.$store.getters.current_user.auth.uid){
                 this.dialog = true;
                 return;
             }

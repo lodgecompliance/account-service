@@ -2,16 +2,11 @@
     <app-layer ref="app" color="#D7D7D7">
       <v-row justify="center" style="min-height: 50vh" class="pt-16" >
         <v-col cols="12" sm="8" md="6">
-          <div class="mb-5 text-center">
-            <router-link :to="{name: 'home'}">
-              <img src="../../../assets/img/app-logo.png" height="80px" alt="Lodge Compliance">
-            </router-link>
-          </div>
           <data-container
-          :loading="loading"
-          :error="error"
-          :can-retry="true"
-          @retry="getPendingUser"
+            :loading="loading"
+            :error="error"
+            :can-retry="true"
+            @retry="getPendingUser"
           >
             <template v-if="pendingUser">
               <template v-if="authUserMatchPendingUser">

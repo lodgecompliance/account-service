@@ -97,6 +97,7 @@ last_verification_report {
         }
     }
 }
+verified
 `;
 const smileFields = `
 ResultCode
@@ -115,6 +116,7 @@ Actions {
   Update_Registered_Selfie_On_File
   Selfie_To_Registered_Selfie_Compare
 }
+verified
 `
 export default {
     methods: {
@@ -127,6 +129,14 @@ export default {
                       query getUserById($id: ID!) {
                         getUserById(id: $id) {
                             id_verification {
+                                country
+                                provider
+                                manually_completed
+                                first_name
+                                last_name
+                                id_type
+                                id_image
+                                id_number
                                 stripe {
                                     ${stripeFields}
                                 }

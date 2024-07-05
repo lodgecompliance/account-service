@@ -74,12 +74,14 @@ export default {
                     mutation: gql `
                     mutation saveUserIdVerification( $data: UserIdVerificationInput!) {
                       saveUserIdVerification(data: $data) {
+                        country
+                        provider
                         first_name
                         last_name
-                        country
                         id_type
                         id_number
                         id_image
+                        manually_completed
                         timestamp {
                           created_at
                           updated_at

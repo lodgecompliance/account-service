@@ -13,7 +13,6 @@
               <span>{{  statuses[dataVerification.status] ? statuses[dataVerification.status].tag : dataVerification.status }}</span>
             </v-chip>
           </div>
-          <p>Updated {{ lastUpdated }}</p>
           <div v-if="isMine && dataVerification.status === 'requires_input'" >
             <v-btn @click="continueVerificationSession" text small color="primary" :loading="continuing">Complete ID Verification</v-btn>
             <error-handler :error="continueVerificationError" @retry="continueVerificationSession" />
@@ -25,11 +24,6 @@
                   >
             <v-icon size="18">mdi-refresh</v-icon> check status again
           </v-btn>
-          <template v-if="dataVerification.last_verification_report">
-            <slot name="verification" v-bind="{ verification: dataVerification }" />
-            <v-btn class="ma-1" small text color="primary" @click="$refs.report.open()">View Verification</v-btn>
-          </template>
-          <verification-report ref="report" :verification="verification" />
         </v-card-text>
         <v-card-text v-else class="text-center grey--text">
           <p>No verification available</p>
@@ -48,7 +42,6 @@
 
 <script>
 import moment from 'moment';
-import VerificationReport from './StripeVerificationReport.vue';
 import StripeIdGateway from "@/components/Utilities/StripeIdGateway";
 import ErrorHandler from "@/components/ErrorHandler";
 import DataContainer from "@/components/DataContainer";
@@ -62,7 +55,6 @@ export default {
       DataContainer,
       ErrorHandler,
       StripeIdGateway,
-       VerificationReport
     },
     
     data(){
@@ -119,47 +111,47 @@ export default {
     }, 
 
     methods: {
-      ...mapActions(['query', 'mutate']),
-      getVerification() {
-            this.getVerificationError = null;
-            this.loading = true;
-            this.getUserStripeVerification(this.user.id, this.verification.id)
-            .then(session => {
-                this.dataVerification = session;
-                this.$emit('updated', this.dataVerification);
-                this.$store.commit('SNACKBAR', {
-                    status: true,
-                    text: `Verification status updated`,
-                    color: 'info'
-                });
-            })
-            .catch(e => {
-                this.getVerificationError = e;
-            })
-            .finally(() => {
-                this.loading = false;
-            })
-        },
-
-      continueVerificationSession() {
-        this.continuing = true;
-        this.continueVerificationError = null;
+        ...mapActions(['query', 'mutate']),
+        getVerification() {
+          this.getVerificationError = null;
+          this.loading = true;
           this.getUserStripeVerification(this.user.id, this.verification.id)
           .then(session => {
-            this.session = session;
-            this.verificationOngoing = true;
-            return this.$refs.stripeId.verify(this.session.client_secret)
-          })
-          .then(result => {
-            this.$emit('result', result);
+              this.dataVerification = session;
+              this.$emit('updated', this.dataVerification);
           })
           .catch(e => {
-            this.continueVerificationError = e;
+              this.getVerificationError = e;
           })
           .finally(() => {
-            this.continuing = false;
+              this.loading = false;
           })
       },
+
+      checkStatus() {
+          this.getVerification();
+      },
+
+     continueVerificationSession() {
+      this.continuing = true;
+      this.continueVerificationError = null;
+        this.getUserStripeVerification(this.user.id, this.verification.id)
+        .then(session => {
+          this.session = session;
+          this.verificationOngoing = true;
+          return this.$refs.stripeId.verify(this.session.client_secret)
+        })
+        .then(result => {
+          this.$emit('result', result);
+        })
+        .catch(e => {
+          this.continueVerificationError = e;
+          this.$emit('error');
+        })
+        .finally(() => {
+          this.continuing = false;
+        })
+    },
 
       createStripeVerificationSession(){
         this.starting = true;
@@ -182,6 +174,7 @@ export default {
         })
         .catch(e => {
           this.startVerificationError = e;
+          this.$emit('error');
         })
         .finally(() => {
           this.starting = false;
@@ -194,7 +187,7 @@ export default {
         verification: {
             immediate: true,
             handler(verification) {
-                this.dataVerification = verification;
+                if(verification) this.getVerification();
             }
         }
     }
