@@ -70,9 +70,9 @@ export default {
       let modes = [{
         id: 'personal',
         color: "accent",
-        title: this.current_user.profile.full_name,
+        title: this.current_user?.profile?.full_name,
         subtitle: "Personal",
-        profile: this.current_user.profile
+        profile: this.current_user?.profile
       }];
       if(this.userBusinesses.length) {
         modes = modes.concat(this.userBusinesses.map( userBusiness => {

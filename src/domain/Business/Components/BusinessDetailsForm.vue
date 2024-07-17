@@ -1,7 +1,7 @@
 <template>
   <v-card v-bind="$attrs" :loading="loading">
     <slot name="header" />
-    <v-card-text>
+    <v-card-text class="pt-3">
       <v-form ref="form" v-bind="$attrs">
         <v-text-field
             v-model="form.name"

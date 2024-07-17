@@ -197,11 +197,17 @@ export default {
           this.getAuthUserToken()
           .then(() => this.getAuthUserAccount())
           .then(() => {
-            this.SET_APP_STATE(true)
+            this.SET_APP_STATE(true);
+            if(!this.current_user.profile && this.$route.name !== 'onboard') {
+              this.$router.push({ name: 'onboard', query: { redirect: this.$route.fullPath} })
+            }
           })
           .catch(e => {
             console.log("Auth error-->", e)
             this.signUserOut()
+          })
+          .finally(() => {
+
           })
       },
 
