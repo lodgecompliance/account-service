@@ -68,6 +68,12 @@ export default gql`
                     value
                 }
             }
+            onboarding {
+                id
+                title
+                description
+                completed
+            }
             businesses {
                 id
                 role
@@ -95,6 +101,12 @@ export default gql`
                         image
                         email
                         address
+                    }
+                    onboarding {
+                        id
+                        title
+                        description
+                        completed
                     }
                     wallet_account_id
                 }

@@ -6,6 +6,7 @@ import GET_SYSTEM_PARAMS from '@/graphql/query/getSystemParam'
 import config from "@/config";
 import helper from "@/helper";
 import { TokenManager } from "@/auth-token";
+import gql from "graphql-tag";
 
 const actions = {
     broadcast({ getters }, data) {
@@ -73,6 +74,59 @@ const actions = {
                     resolve(account);
                 })
                 .catch(e => reject(e))
+        })
+    },
+
+    getAuthUserOnboardingItems({ commit, dispatch }) {
+        return new Promise((resolve, reject) => {
+            dispatch('query', {
+                domain: config.apollo.account,
+                query: gql`
+                  query getOnboardingItems {
+                    getAuthUser {
+                      onboarding {
+                        id
+                        title
+                        description
+                        completed
+                      }
+                    }
+                  }
+                `,
+            }).then(response => {
+                const account = response.data.getAuthUser;
+                commit('SET_USER_PROFILE_KEYS', account);
+                resolve(account.onboarding);
+            })
+            .catch(e => reject(e))
+        })
+    },
+
+    getBusinessOnboardingItems({ commit, dispatch, getters }) {
+        return new Promise((resolve, reject) => {
+            dispatch('query', {
+                domain: config.apollo.account,
+                query: gql`
+                  query getOnboardingItems {
+                    getBusinessById(id: ID!) {
+                      onboarding {
+                        id
+                        title
+                        description
+                        completed
+                      }
+                    }
+                  }
+                `,
+                variables: {
+                    id: getters.current_user.business.id
+                },
+            }).then(response => {
+                const business = response.data.getBusinessById;
+                commit('SET_USER_BUSINESS_KEYS', business);
+                resolve(business.onboarding);
+            })
+            .catch(e => reject(e))
         })
     },
 

@@ -249,7 +249,7 @@ export default {
     ...mapMutations(['SNACKBAR']),
     cancel() {
       this.$refs.form.reset();
-      this.$emit("cancel")
+      this.$emit("close")
     },
 
     setForm() {

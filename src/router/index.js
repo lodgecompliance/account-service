@@ -18,7 +18,7 @@ import BusinessIntegrations from "@/domain/Business/Views/Integrations.vue";
 import BusinessStripeConnect from "@/domain/Business/Views/StripeConnect.vue";
 import BusinessProperties from "@/domain/Business/Views/Properties.vue";
 import BusinessWallets from "@/domain/Business/Views/Wallets.vue";
-import BusinessCreditCards from "@/domain/Business/Views/CreditCards.vue";
+import BusinessBilling from "@/domain/Business/Views/Billing.vue";
 import Signout from "@/domain/Auth/Views/Signout.vue";
 import UserSharedProfile from "@/domain/User/Views/SharedProfile.vue";
 
@@ -161,11 +161,11 @@ const routes = [
     beforeEnter: multiguard([middleware.auth])
   },
   {
-    path: '/:business/credit-cards',
-    name: 'business.credit.cards',
-    component: BusinessCreditCards,
+    path: '/:business/billing',
+    name: 'business.billing',
+    component: BusinessBilling,
     meta: {
-      title: "Business Credit Cards"
+      title: "Business Billing"
     },
     beforeEnter: multiguard([middleware.auth])
   },

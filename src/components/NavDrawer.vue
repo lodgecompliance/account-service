@@ -198,9 +198,9 @@ export default {
           router: true,
         },
         {
-          title: 'Credit Cards',
+          title: 'Billing',
           icon: 'mdi-credit-card',
-          route: { name: 'business.credit.cards', params: { business: this.mode } },
+          route: { name: 'business.billing', params: { business: this.mode } },
           render: true,
           router: true,
         },

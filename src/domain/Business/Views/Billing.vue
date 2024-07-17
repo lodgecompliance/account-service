@@ -1,6 +1,9 @@
 <template>
   <business-profile-page>
-    <business-credit-cards :business="currentBusiness" />
+    <business-credit-cards
+        :business="currentBusiness"
+        @credit-card-added="$store.dispatch('getBusinessOnboardingItems')"
+    />
   </business-profile-page>
 </template>
 
@@ -13,7 +16,7 @@ import { mapMutations } from "vuex";
 import BusinessCreditCards from "@/domain/Business/Widgets/BusinessCreditCards.vue";
 
 export default {
-  name: "BusinessCreditCardsPage",
+  name: "BusinessBillingPage",
   mixins:[current_business],
   components: {
     BusinessCreditCards,

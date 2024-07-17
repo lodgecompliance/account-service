@@ -21,7 +21,7 @@ export default {
     ...mapGetters([ 'user_notifications' ]),
 
     unreadNotifications() {
-      return this.user_notifications.filter(n => !n.read).length
+      return this.user_notifications.filter(n => !n.read).length.toString()
     }
   },
 }

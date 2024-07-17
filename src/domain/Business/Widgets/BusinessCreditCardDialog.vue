@@ -89,5 +89,13 @@ export default {
 
     },
   },
+  watch: {
+    $route: {
+      immediate: true,
+      handler(route) {
+        this.dialog = route.name === 'business.billing' && route.query.action === 'add-new';
+      }
+    }
+  }
 }
 </script>

@@ -44,7 +44,8 @@
       },
       methods: {
         integrationCreated(integration) {
-          this.integrations.unshift(integration)
+          this.integrations.unshift(integration);
+          this.$store.dispatch('getBusinessOnboardingItems');
         },
         getBusinessIntegrations() {
           this.loading = true;

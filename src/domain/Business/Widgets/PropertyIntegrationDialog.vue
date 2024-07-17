@@ -101,6 +101,14 @@ export default {
       })
       this.dialog = false;
     }
+  },
+  watch: {
+    $route: {
+      immediate: true,
+      handler(route) {
+        this.dialog = route.name === 'business.integrations' && route.query.action === 'add-new';
+      }
+    }
   }
 }
 </script>

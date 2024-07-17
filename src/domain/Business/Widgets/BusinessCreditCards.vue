@@ -11,7 +11,7 @@
       <business-credit-card-dialog
           :business="business"
           :activator="{ color: 'primary', depressed: true }"
-          @credit-card-added="c => cards.unshift(c)"
+          @credit-card-added="cardAdded"
       >
         <v-icon>mdi-plus</v-icon> Add card
       </business-credit-card-dialog>
@@ -23,7 +23,7 @@
       <v-col
           v-for="card in cards"
           :key="card.id"
-          cols="12" sm="6" md="4"
+          cols="12" md="6"
       >
         <stripe-credit-card :card="card">
           <template #actions="attr">
@@ -106,6 +106,11 @@ export default {
       }
       this.$refs.confirmation.open();
     },
+
+    cardAdded(card) {
+      this.cards.unshift(card);
+      this.$emit('credit-card-added', card)
+    }
 
   },
   watch: {

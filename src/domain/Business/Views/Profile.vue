@@ -1,6 +1,10 @@
 <template>
     <app-layer ref="app">
         <v-row justify="center">
+            <v-col cols="12" md="3" order-md="last">
+              <h4 class="my-3">Complete Setting up your Business</h4>
+              <business-onboarding-list />
+            </v-col>
             <v-col cols="12" md="8">
               <div class="d-flex justify-space-between align-center">
                 <div class="d-flex align-center mb-5">
@@ -65,11 +69,13 @@
     import BusinessDetails from "@/domain/Business/Components/BusinessDetailsForm.vue";
     import current_user from "@/domain/User/Mixins/current_user";
     import BusinessImageForm from "@/domain/Business/Components/BusinessImageUpdate.vue";
+    import BusinessOnboardingList from "@/domain/Business/Widgets/OnboardingList.vue";
 
     export default {
         name: "BusinessProfilePage",
         mixins:[current_user, current_business],
         components: {
+          BusinessOnboardingList,
           BusinessImageForm,
           BusinessDetails, BusinessStatus, ProfileAvatar, AppLayer
         },
@@ -84,8 +90,10 @@
           owner() {
             return this.currentBusiness?.owner?.user;
           },
+          pendingOnboardingItems() {
+            return (this.currentBusiness?.onboarding || []).filter(item => !item.completed)
+          }
         },
-
         methods: {
           businessUpdate(update) {
             if(update.id === this.currentBusiness?.id) {

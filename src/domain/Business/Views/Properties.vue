@@ -12,6 +12,7 @@
             :business="currentBusiness"
             :activator="{ color: 'primary', depressed: true }"
             @property-created="propertyCreated"
+            ref="form"
         >
           <v-icon>mdi-plus</v-icon> <span v-show="$vuetify.breakpoint.smAndUp">Add New</span>
         </business-property-dialog>
@@ -47,8 +48,14 @@
       methods: {
         propertyCreated(property) {
           this.$refs.properties.propertyCreated(property);
+          this.$store.dispatch('getBusinessOnboardingItems');
         }
       },
+
+      mounted() {
+        this.$refs.form.dialog = this.$route.name === 'business.properties' && this.$route.query.action === 'add-new'
+      }
+
     }
 </script>
 

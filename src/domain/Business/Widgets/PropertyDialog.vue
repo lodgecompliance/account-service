@@ -18,7 +18,7 @@
         :property="property"
         v-on="$listeners"
         @property-created="dialog = false"
-        @cancel="dialog = false"
+        @close="dialog = false"
     />
   </corner-dialog>
 </template>
@@ -52,6 +52,5 @@ export default {
       }
     }
   }
-
 }
 </script>

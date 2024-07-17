@@ -1,6 +1,10 @@
 <template>
   <app-layer ref="app">
     <v-row justify="center">
+      <v-col cols="12" md="3" order-md="last">
+        <h4  class="my-3">Complete Your Onboarding</h4>
+        <user-onboarding-list />
+      </v-col>
       <v-col cols="12" md="8">
         <div class="d-flex justify-space-between">
           <div class="d-flex align-center mb-5">
@@ -41,7 +45,9 @@
             </template>
           </personal-info>
         </slot>
-        <corner-dialog
+      </v-col>
+    </v-row>
+    <corner-dialog
             v-model="createBusiness"
             width="400"
             persistent
@@ -70,8 +76,6 @@
             </template>
           </business-details>
         </corner-dialog>
-      </v-col>
-    </v-row>
   </app-layer>
 </template>
 
@@ -83,11 +87,13 @@ import current_user from "@/domain/User/Mixins/current_user";
 import AppLayer from "@/AppLayer.vue";
 import BusinessDetails from "@/domain/Business/Components/BusinessDetailsForm.vue";
 import CornerDialog from "@/components/CornerDialog.vue";
+import UserOnboardingList from "@/domain/User/Widgets/OnboardingList.vue";
 
 export default {
   name: "UserProfilePage",
   mixins: [current_user],
   components: {
+    UserOnboardingList,
     CornerDialog,
     BusinessDetails,
     AppLayer,
@@ -100,6 +106,19 @@ export default {
       createBusiness: false,
     }
   },
+  computed: {
+    pendingOnboardingItems() {
+      return (this.profile?.onboarding || []).filter(item => !item.completed)
+    }
+  },
+  watch: {
+    $route: {
+      immediate: true,
+      handler(route) {
+        this.createBusiness = route.name === 'user.businesses' && route.query?.action === 'create-new'
+      }
+    }
+  }
 }
 </script>
 

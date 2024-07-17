@@ -53,7 +53,7 @@
         :property="property"
         :business="business"
         :has-activator="false"
-        @cancel="property = null"
+        @close="property = null"
         @property-updated="propertyUpdated"
     />
   </section>
@@ -66,6 +66,7 @@ import ErrorHandler from "@/components/ErrorHandler.vue";
 import BusinessPropertyDialog from "@/domain/Business/Widgets/PropertyDialog.vue";
 import business from "@/domain/Business/Mixins/business";
 import config from "@/config";
+import {mapActions} from "vuex";
 export default {
   name: 'BusinessProperties',
   mixins:[business],
