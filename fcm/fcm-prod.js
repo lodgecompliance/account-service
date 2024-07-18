@@ -1,14 +1,13 @@
 importScripts('https://www.gstatic.com/firebasejs/9.2.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.2.0/firebase-messaging-compat.js');
 firebase.initializeApp({
-    apiKey: 'AIzaSyCgNHqFc5m3Tl-wwA9A5Bn3g98T-jvNkLI',
-    authDomain: 'app.guestregistration.com',
-    databaseURL: 'https://guest-registration-prod.firebaseio.com',
-    projectId: 'guest-registration-prod',
-    storageBucket: 'guest-registration-prod.appspot.com',
-    messagingSenderId: '496454377261',
-    appId: '1:496454377261:web:963a83f3fef165f3ca7da4',
-    measurementId: 'G-JKPB3JZPKQ',
+    apiKey: "AIzaSyA-AjInpJroxpUzOwlnphkf1uFqL5iadrk",
+    authDomain: "lodge-compliance-59f61.firebaseapp.com",
+    projectId: "lodge-compliance-59f61",
+    storageBucket: "lodge-compliance-59f61.appspot.com",
+    messagingSenderId: "747424469308",
+    appId: "1:747424469308:web:e531fa274b976b9ae20e39",
+    measurementId: "G-Y308XWM97N"
 });
 firebase.messaging()
     .onBackgroundMessage(function(payload) {
