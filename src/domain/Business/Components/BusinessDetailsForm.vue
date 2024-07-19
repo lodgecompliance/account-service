@@ -47,6 +47,7 @@
             v-model="form.document"
             :custom-preview="true"
             accept="image/*,.pdf"
+            path="business-docs"
             :rules="!form.document ? [rules.required] : []"
         >
           <template #default="{ document, selectNewFile }">
