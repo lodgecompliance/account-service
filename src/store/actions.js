@@ -107,8 +107,8 @@ const actions = {
             dispatch('query', {
                 domain: config.apollo.account,
                 query: gql`
-                  query getOnboardingItems {
-                    getBusinessById(id: ID!) {
+                  query getOnboardingItems($id: ID!) {
+                    getBusinessById(id: $id) {
                       onboarding {
                         id
                         title
@@ -119,7 +119,7 @@ const actions = {
                   }
                 `,
                 variables: {
-                    id: getters.current_user.business.id
+                    id: getters.current_user.business.business.id
                 },
             }).then(response => {
                 const business = response.data.getBusinessById;

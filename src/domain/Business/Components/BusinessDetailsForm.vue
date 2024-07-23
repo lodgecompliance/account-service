@@ -41,14 +41,14 @@
             dense
             outlined
             label="Business RC Number"
-            :rules="[rules.required]"
+            :rules="[]"
         ></v-text-field>
         <file-upload
             v-model="form.document"
             :custom-preview="true"
             accept="image/*,.pdf"
             path="business-docs"
-            :rules="!form.document ? [rules.required] : []"
+            :rules="[]"
         >
           <template #default="{ document, selectNewFile }">
             <files-preview v-if="form.document" :value="[form.document]" :grid="1">
@@ -133,7 +133,7 @@ export default {
     submission() {
       return new Promise((resolve, reject) => {
         if(!this.$refs.form.validate()) throw new Error("Some information are still missing");
-        if(!this.form.document) throw new Error("Upload your business document");
+        // if(!this.form.document) throw new Error("Upload your business document");
         (this.business ? this.updateBusiness(this.business.id, this.form) : this.createBusiness(this.form))
           .then(business => {
             if(!this.business) this.$refs.form.reset();
