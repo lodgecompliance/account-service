@@ -98,6 +98,7 @@ export default {
     uploadFiles(files) {
       if(!files) return;
       this.document.uploading = true;
+      this.error = null;
       this.document.file = this.isMultiple ? files : files[0]
       Promise.all(Array.from(files).map(file => this.uploadFile(file))).then(urls => {
         urls = urls.filter(url => !!url);
@@ -105,12 +106,12 @@ export default {
         this.document.uploaded = true;
         this.$emit("input", this.document.file_url);
       })
-          .catch(e => {
-            this.error = e;
-          })
-          .finally(() => {
-            this.document.uploading = false;
-          })
+      .catch(e => {
+        this.error = e;
+      })
+      .finally(() => {
+        this.document.uploading = false;
+      })
     },
   },
 }

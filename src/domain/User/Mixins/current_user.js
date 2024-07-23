@@ -1,4 +1,4 @@
-import {mapGetters, mapMutations} from "vuex";
+import {mapActions, mapGetters, mapMutations} from "vuex";
 
 export default {
 
@@ -41,6 +41,8 @@ export default {
             'SET_USER_BUSINESS_KEYS'
         ]),
 
+        ...mapActions(['getBusinessOnboardingItems']),
+
         switchUserBusiness(business) {
             this.SET_USER_BUSINESS(this.userBusinesses.find(ub => ub.business.id === business.id));
         },
@@ -57,7 +59,9 @@ export default {
                 color: "success"
             })
             this.createBusiness = false;
-            this.$router.push({ name: 'business.profile', params: { business: business.id } })
+            this.getBusinessOnboardingItems().then(() => {
+                this.$router.push({ name: 'business.profile', params: { business: business.id } })
+            })
         },
 
         businessUpdated(update) {

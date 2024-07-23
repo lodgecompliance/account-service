@@ -79,6 +79,8 @@
           BusinessImageForm,
           BusinessDetails, BusinessStatus, ProfileAvatar, AppLayer
         },
+
+
         data() {
           return {
             version: 0,
