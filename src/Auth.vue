@@ -52,7 +52,7 @@ export default {
 
     authCompleted(authenticated) {
       if(this.inFrame) this.broadcastAuth()
-      else if(this.$route.query.referer) window.location.replace(this.$route.query.referer);
+      else if(this.$route.query.referer) window.location.replace(this.$route.query.referer)
     },
   },
 }
