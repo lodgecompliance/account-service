@@ -41,6 +41,7 @@ const routes = [
     path: '/shared-profile/:token',
     name: 'shared.profile',
     component: UserSharedProfile,
+    beforeEnter: multiguard([middleware.auth])
   },
   {
     path: '/signin',

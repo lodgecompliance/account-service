@@ -195,9 +195,6 @@ export default {
           this.error = error;
       },
 
-      profileCompleted() {
-      },
-
     },
 
   watch: {
