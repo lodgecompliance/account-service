@@ -111,20 +111,20 @@
               <address-input
                   v-model="form.address"
                   :google-places="{
-          label: 'Property Address',
-          outlined: true,
-          dense: true,
-          clearable: true,
-          value: form.address,
-          rules: [rules.required]
-        }"
+                    label: 'Property Address',
+                    outlined: true,
+                    dense: true,
+                    clearable: true,
+                    value: form.address,
+                    rules: [rules.required]
+                  }"
                   :text-field="{
-          label: 'Property Address',
-          outlined: true,
-          dense: true,
-          value: form.address,
-          rules: [rules.required]
-        }"
+                  label: 'Property Address',
+                  outlined: true,
+                  dense: true,
+                  value: form.address,
+                  rules: [rules.required]
+                }"
               />
 
               <property-currency-select
@@ -149,8 +149,8 @@
                   dense
                   outlined
                   label="Terms"
-                  placeholder="Enter terms URL"
-                  :rules="[rules.url]"
+                  placeholder="e.g https://example.com/terms"
+                  :rules="[]"
               ></v-text-field>
 
               <error-handler :error="formError" />
