@@ -117,7 +117,7 @@ const routes = [
     beforeEnter: multiguard([middleware.auth])
   },
   {
-    path: '/:business',
+    path: '/:business/profile',
     name: 'business.profile',
     component: BusinessProfile,
     meta: {
@@ -187,7 +187,8 @@ const router = new VueRouter({
   routes,
   scrollBehavior() {
     return { x: 0, y: 0 };
-  }
+  },
+  strict: true
 })
 
 router.beforeEach((to, from, next) => {
