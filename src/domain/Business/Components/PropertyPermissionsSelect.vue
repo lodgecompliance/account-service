@@ -5,6 +5,21 @@
       :can-retry="true"
       @retry="loadPermissions">
 
+      <div class="text-right mb-4">
+        <v-btn text color="primary" v-if="selected.length && selected" @click="unSelectAllItems" small>
+          <span >
+            <v-icon small>mdi-checkbox-blank</v-icon> unselect all
+          </span>
+        </v-btn>
+
+        <v-btn v-else text color="primary" @click="selectAllItems" small>
+          <span>
+            <v-icon  small>mdi-checkbox-blank-outline</v-icon> select all
+          </span>
+        </v-btn>
+      </div>
+      
+
     <v-list-item-group
         v-model="selected"
         @change="emitSelected"
@@ -76,7 +91,20 @@ export default {
     setSelected() {
       this.selected = this.value
           .map(p => this.allPermssions.findIndex(pe => pe.id === p))
-          .filter(index => index >= 0);
+          .filter(index => index >= 0)
+    },
+    selectAllItems() {
+      if (this.allPermssions.length > 0) {
+          this.allPermssions.forEach((item, index) => {
+            this.selected.push(index);
+            this.emitSelected();
+          });
+      }
+    },
+
+    unSelectAllItems() {
+      this.selected = [];
+      this.emitSelected();
     },
 
     emitSelected() {
