@@ -4,7 +4,7 @@
         <v-select
             dense outlined
             label="ID Type"
-            item-text="label"
+            item-text="name"
             item-value="value"
             :items="idTypesOption"
             v-model="form.id_type"
@@ -15,28 +15,12 @@
           <v-text-field
               dense outlined
               type="text"
-              :label="`ID number on ${idType.label}`"
+              :label="idType.label || idType.name"
               v-model="form.id_number"
               :rules="[rules.required, idType.validator]"
           ></v-text-field>
-          <v-text-field
-              dense outlined
-              type="text"
-              :label="`First Name on ${idType.label}`"
-              v-model="form.first_name"
-              :rules="[rules.required]"
-          >
-          </v-text-field>
-          <v-text-field
-              dense outlined
-              type="text"
-              :label="`Last Name on ${idType.label}`"
-              v-model="form.last_name"
-              :rules="[rules.required]"
-          >
-          </v-text-field>
           <file-upload
-              v-if="requireUpload"
+              v-if="uploadDoc"
               v-model="form.id_image"
               accept="image/*"
               :custom-preview="true"
@@ -65,7 +49,7 @@
                   :loading="document.uploading"
                   @click="selectNewFile"
                   class="mb-2"
-              ><v-icon small>mdi-paperclip</v-icon> Upload {{   form.id_type ? form.id_type : 'ID' }}</v-btn>
+              ><v-icon small>mdi-paperclip</v-icon> Upload {{  idType && idType.name ? idType.name : 'ID' }}</v-btn>
             </template>
           </file-upload>
         </template>
@@ -107,36 +91,41 @@ export default {
           label: 'Ghana',
           id_types: [
             {
-              label: 'Drivers License',
+              name: 'Drivers License',
               value: 'DRIVERS_LICENSE',
+              upload: true,
               validator: v => {
                 return /^[a-zA-Z0-9]{6,10}$/i.test(v) || 'Format should be *B0000000'
               }
             },
             {
-              label: 'Passport',
+              name: 'Passport',
               value: 'PASSPORT',
+              upload: true,
               validator: v => {
                 // return /^(?i)G[a-zA-Z0-9]{7,9}$/i.test(v) || 'Format should be *G0000000'
               }
             },
             {
-              label: 'SSNIT',
+              name: 'SSNIT',
               value: 'SSNIT',
+              upload: true,
               validator: v => {
                 return /^[a-zA-Z]{1}[a-zA-Z0-9]{12,14}$/i.test(v) || 'Format should be *C000000000000'
               }
             },
             {
-              label: 'Voter ID',
+              name: 'Voter ID',
               value: 'VOTER_ID',
+              upload: true,
               validator: v => {
                 return /^[0-9]{10,12}$/.test(v) || 'Format should be 0000000000'
               }
             },
             {
-              label: 'New Voter ID',
+              name: 'New Voter ID',
               value: 'NEW_VOTER_ID',
+              upload: true,
               validator: v => {
                 return /^[0-9]{10,12}$/.test(v) || 'Format should be 0000000000'
               }
@@ -148,22 +137,25 @@ export default {
           label: 'Kenya',
           id_types: [
             {
-              label: 'Alien Card',
+              name: 'Alien Card',
               value: 'ALIEN_CARD',
+              upload: true,
               validator: v => {
                 return /^[0-9]{6,9}$/.test(v) || 'Format should be 000000'
               }
             },
             {
-              label: 'National ID',
+              name: 'National ID',
               value: 'NATIONAL_ID',
+              upload: true,
               validator: v => {
                 return /^[0-9]{1,9}$/.test(v) || 'Format should be 00000000'
               }
             },
             {
-              label: 'Passport',
+              name: 'Passport',
               value: 'PASSPORT',
+              upload: true,
               validator: v => {
                 return/^[A-Z0-9]{7,9}$/.test(v) || 'Format should be *A00000000'
               }
@@ -175,36 +167,35 @@ export default {
           label: 'Nigeria',
           id_types: [
             {
-              label: 'BVN',
+              name: 'BVN',
               value: 'BVN',
+              upload: false,
               validator: v => {
                 return /^[0-9]{11}$/.test(v) || 'Formmat should be 00000000000'
               }
             },
             {
-              label: 'NIN',
+              name: 'NIN',
               value: 'NIN',
+              upload: true,
               validator: v => {
                 return /^[0-9]{11}$/.test(v) || 'Format should be 00000000000'
               }
             },
             {
-              label: 'NIN Slip',
-              value: 'NIN_SLIP',
-              validator: v => {
-                return /^[0-9]{11}$/.test(v) || 'Format should be 00000000000'
-              }
-            },
-            {
-              label: 'Drivers License',
+              name: 'Drivers License',
               value: 'DRIVERS_LICENSE',
+              label: 'Drivers License ID',
+              upload: true,
               validator: v => {
                 return /^[a-zA-Z]{3}([ -]{1})?[A-Z0-9]{6,12}$/i.test(v) || 'Format should be *ABC000000000';
               }
             },
             {
-              label: 'Voter ID',
+              name: 'Voter ID',
               value: 'VOTER_ID',
+              label: 'Voter ID Number',
+              upload: true,
               validator: v => {
                 return /^[a-zA-Z0-9 ]{9,19}$/i.test(v) || 'Format should be 0000000000000000000'
               }
@@ -217,15 +208,17 @@ export default {
           label: 'South Africa',
           id_types: [
             {
-              label: 'National ID',
+              name: 'National ID',
               value: 'NATIONAL_ID',
+              upload: true,
               validator: v => {
                 return /^[0-9]{13}$/.test(v) || 'Format should be 0000000000000'
               }
             },
             {
-              label: 'National ID, No Photo',
+              name: 'National ID, No Photo',
               value: 'NATIONAL_ID_NO_PHOTO',
+              upload: true,
               validator: v => {
                 return /^[0-9]{13}$/.test(v) || 'Format should be 0000000000000'
               }
@@ -237,8 +230,9 @@ export default {
           label: 'Uganda',
           id_types: [
             {
-              label: 'National ID, No Photo',
+              name: 'National ID, No Photo',
               value: 'NATIONAL_ID_NO_PHOTO',
+              upload: true,
               validator: v => {
                 return /^[A-Z0-9]{14}$/i.test(v) || 'Format should be 00000000000000'
               }
@@ -264,18 +258,21 @@ export default {
           label: country.name,
           id_types: [
             {
-              label: 'National ID',
+              name: 'National ID',
               value: 'NATIONAL_ID',
+              upload: true,
               validator: v => true
             },
             {
-              label: 'Drivers License',
+              name: 'Drivers License',
               value: 'DRIVERS_LICENSE',
+              upload: true,
               validator: v => true
             },
             {
-              label: 'Passport',
+              name: 'Passport',
               value: 'PASSPORT',
+              upload: true,
               validator: v => true
             },
           ]
@@ -291,6 +288,10 @@ export default {
     idType() {
       if(!this.form.id_type) return null;
       return this.idTypesOption.find(type => type.value === this.form.id_type);
+    },
+
+    uploadDoc() {
+      return this.requireUpload && this.idType?.upload
     }
   },
 

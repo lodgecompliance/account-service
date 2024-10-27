@@ -1,7 +1,7 @@
 /* eslint-disable */
 const formValidation = {
         rules: {
-            required: value => (value !== '' && value !== null && value !== undefined) || 'Fied required.',
+            required: value => (value !== '' && value !== null && value !== undefined) || 'Field required.',
             optional: value => !value,
             number: value => (!!value && /\d/.test(value)) || 'Invalid number',
             email: value => {
