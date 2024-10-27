@@ -310,7 +310,7 @@ export default {
     submission() {
       if(!this.$refs.form.validate()) return Promise.resolve();
       this.form.country = this.country;
-      if(this.requireUpload && !this.form.id_image) return Promise.reject(new Error("Upload your "+this.form.id_type))
+      if(this.uploadDoc && !this.form.id_image) return Promise.reject(new Error("Upload your "+this.form.id_type))
       return new Promise((resolve, reject) => {
         this.saveUserIdVerification(this.form)
         .then(id => {
