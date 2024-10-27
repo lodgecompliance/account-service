@@ -2,8 +2,8 @@
     <data-container :loading="loading" :error="getVerificationError" @retry="getVerification">
       <v-card flat v-bind="$attrs" :loading="continuing || starting">
         <v-card-text v-if="dataVerification">
-          <div class="d-flex flex-wrap align-items-center justify-space-between">
-            <div class="text-uppercase">Verification Type: {{ dataVerification.type  }}</div>
+          <div class="d-flex flex-nowrap align-center">
+            <div class="text-uppercase">Status:</div>
             <v-chip
                 class="ma-2"
                 :color="`${statuses[dataVerification.status] ? statuses[dataVerification.status].color : 'info'}`"
