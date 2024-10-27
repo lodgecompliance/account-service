@@ -11,25 +11,47 @@
       <stripe-verification
           v-if="provider === 'stripe'"
           :user="user"
-          :verification="verification.stripe"
+          :verification="verification"
+          :is-owner="isOwner"
           @error="useManual = true"
+          @session="onVerificationSession"
           @result="stripeVerificationResult"
+          @saved="synced => $emit('synced', synced)"
       />
       <smile-verification
           v-if="provider === 'smile'"
           :user="user"
-          :verification="verification.smile"
+          :verification="verification"
+          :is-owner="isOwner"
           @error="useManual = true"
+          @session="onVerificationSession"
           @submitted="smileVerificationSubmitted"
+          @saved="synced => $emit('synced', synced)"
       />
-      <template v-if="useManual || (verification[provider] && !verification[provider].verified)">
-        <p class="text-center">Your verification is not successful yet, kindly provide us alternative document</p>
-        <manual-verification
-            :user="user"
-            :country="country"
-            :verification="verification"
-            @saved="synced => $emit('synced', synced)"
-        />
+      <template v-if="!currentSession">
+        <div v-if="!verified && verification.manually_completed">
+          <div class="mt-3">
+            <v-alert
+                colored-border
+                border="left"
+                type="info"
+            >
+              ID verification was not successful, but alternative manual ID was provided
+            </v-alert>
+            <v-btn v-if="isOwner" small color="primary" @click="submitManual" class="mt-2" depressed>Re submit ID</v-btn>
+          </div>
+        </div>
+        <div v-if="useManual">
+          <p class="text-center mt-5">Your verification was not successful, kindly provide us alternative document
+          </p>
+          <manual-verification
+              :user="user"
+              :country="country"
+              :verification="verification"
+              :require-upload="true"
+              @saved="manualIdSubmitted"
+          />
+        </div>
       </template>
     </data-container>
 </template>
@@ -54,14 +76,15 @@ export default {
     },
     data(){
         return {
-            country: null,
-            results: {
-              stripe: null,
-              smile: null,
-            },
+          country: null,
+          results: {
+            stripe: null,
+            smile: null,
+          },
           loading: false,
           error: null,
           useManual: false,
+          currentSession: null,
         }
     },
     props: {
@@ -69,17 +92,23 @@ export default {
         verification: Object,
     },
     computed: {
-      isMine(){
-          if(this.verification && this.verification.user_id) {
-              return this.verification.user_id === this.$store.getters.current_user.profile.id
-          }
-          return false;
-        },
+      isOwner() {
+        if(this.verification && this.verification.user_id) {
+          return this.verification.user_id === this.$store.getters.current_user.profile.id
+        }
+        return false;
+      },
       provider() {
-        return this.verification.provider;
+        return this.verification?.provider;
+      },
+      verified() {
+        return this.verification[this.provider] && this.verification[this.provider].verified
       }
     },
     methods: {
+      onVerificationSession(session) {
+        this.currentSession = session;
+      },
       syncVerification() {
         this.loading = true;
         this.getUserVerification(this.user.id).then(verification => {
@@ -89,11 +118,13 @@ export default {
 
       stripeVerificationResult(result) {
         this.results.stripe = result;
+        this.currentSession = null;
         this.syncVerification()
       },
 
       smileVerificationSubmitted(result) {
         this.results.smile = result;
+        this.currentSession = null;
         this.syncVerification();
       },
 
@@ -101,13 +132,22 @@ export default {
         this.loading = true;
          this.saveUserIdVerification({ country: this.country })
          .then(() => this.syncVerification())
-       }
+       },
+
+      submitManual() {
+        this.currentSession = null;
+        this.useManual = true;
+      },
+      manualIdSubmitted(verification) {
+        this.useManual = false;
+        this.$emit('synced', verification)
+      }
     },
     watch: {
       verification: {
         immediate: true,
         handler(v) {
-          this.country = v?.country
+          this.country = v?.country;
         }
       }
     }
