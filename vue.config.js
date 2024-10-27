@@ -8,7 +8,7 @@ module.exports = {
       rules: [
         {
           test: /\.js$/,
-          include: /node_modules\/@smile_identity\/smart-camera-web/,
+          include: /node_modules\/@smileid\/web-components/,
           use: {
             loader: 'babel-loader',
             options: {

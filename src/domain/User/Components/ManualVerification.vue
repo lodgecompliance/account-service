@@ -36,6 +36,7 @@
           >
           </v-text-field>
           <file-upload
+              v-if="requireUpload"
               v-model="form.id_image"
               accept="image/*"
               :custom-preview="true"
@@ -251,6 +252,7 @@ export default {
     user: Object,
     country: String,
     verification: Object,
+    requireUpload: Boolean,
   },
   computed: {
     countryList() {
@@ -298,7 +300,7 @@ export default {
       this.form = {
         first_name: verification.first_name || null,
         last_name: verification.last_name || null,
-        id_type: verification.id_type || null,
+        id_type: this.idTypesOption.find(type => type.value === verification.id_type)?.value,
         id_number: verification.id_number || null,
         id_image: verification.id_image || null
       }
@@ -307,9 +309,8 @@ export default {
     submission() {
       if(!this.$refs.form.validate()) return Promise.resolve();
       this.form.country = this.country;
-      if(!this.form.id_image) return Promise.reject(new Error("Upload your "+this.form.id_type))
+      if(this.requireUpload && !this.form.id_image) return Promise.reject(new Error("Upload your "+this.form.id_type))
       return new Promise((resolve, reject) => {
-        if(!this.form.id_image) throw new Error("Upload your "+this.form.id_type);
         this.saveUserIdVerification(this.form)
         .then(id => {
           this.$emit("saved", id);

@@ -1,8 +1,8 @@
 <template>
   <v-card v-bind="$attrs" :loading="loading">
       <v-card-title>Verification Result</v-card-title>
-      <v-alert color="info" colored-border border="left">
-          {{ result.result.ResultText }}
+      <v-alert :color="result.verified ? `success` : `error`" colored-border border="left">
+          {{ result.ResultText }}
       </v-alert>
       <v-card-text v-if="actions">
           <v-list dense>
@@ -84,14 +84,11 @@
                   </v-list-item-content>
               </v-list-item>
           </v-list>
-          <p v-if="lastUpdated">Updated {{ lastUpdated }}</p>
       </v-card-text>
   </v-card>
 </template>
 
 <script>
-import moment from 'moment';
-
 export default {
     name: "SmileVerificationResult",
     data(){
@@ -111,14 +108,8 @@ export default {
             } 
             return false;
         },
-
-        lastUpdated() {
-            if(!this.result || !this.result.last_updated) return null;
-            return moment.unix(this.result.last_updated).fromNow();
-        },
-
         actions() {
-            return this.result && this.result.result ? this.result.result.Actions : null
+            return this.result && this.result ? this.result.Actions : null
         }
     }, 
 

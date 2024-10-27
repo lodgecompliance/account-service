@@ -13,7 +13,7 @@
               <span>{{  statuses[dataVerification.status] ? statuses[dataVerification.status].tag : dataVerification.status }}</span>
             </v-chip>
           </div>
-          <div v-if="isMine && dataVerification.status === 'requires_input'" >
+          <div v-if="isOwner && dataVerification.status === 'requires_input'" >
             <v-btn @click="continueVerificationSession" text small color="primary" :loading="continuing">Complete ID Verification</v-btn>
             <error-handler :error="continueVerificationError" @retry="continueVerificationSession" />
           </div>
@@ -41,7 +41,6 @@
 </template>
 
 <script>
-import moment from 'moment';
 import StripeIdGateway from "@/components/Utilities/StripeIdGateway";
 import ErrorHandler from "@/components/ErrorHandler";
 import DataContainer from "@/components/DataContainer";
@@ -75,6 +74,7 @@ export default {
     props: {
         user: Object,
         verification: Object,
+        isOwner: Boolean,
         poll: {
             default: true
         },
@@ -84,18 +84,6 @@ export default {
     },
 
     computed: {
-        isMine(){
-            if(this.verification && this.verification.metadata) {
-                return this.verification.metadata.user_id === this.$store.getters.current_user.profile.id
-            } 
-            return false;
-        },
-
-        lastUpdated() {
-            if(!this.verification?.timestamp?.updated_at) return null;
-            return moment.unix(this.verification.timestamp.updated_at).fromNow();
-        },
-
       statuses() {
           return {
             'requires_input': {
@@ -115,7 +103,7 @@ export default {
         getVerification() {
           this.getVerificationError = null;
           this.loading = true;
-          this.getUserStripeVerification(this.user.id, this.verification.id)
+          this.getUserStripeVerification(this.user.id, this.verification.stripe.id)
           .then(session => {
               this.dataVerification = session;
               this.$emit('updated', this.dataVerification);
@@ -128,34 +116,32 @@ export default {
           })
       },
 
-      checkStatus() {
-          this.getVerification();
-      },
-
      continueVerificationSession() {
       this.continuing = true;
       this.continueVerificationError = null;
-        this.getUserStripeVerification(this.user.id, this.verification.id)
-        .then(session => {
-          this.session = session;
-          this.verificationOngoing = true;
-          return this.$refs.stripeId.verify(this.session.client_secret)
-        })
-        .then(result => {
-          this.$emit('result', result);
-        })
-        .catch(e => {
-          this.continueVerificationError = e;
-          this.$emit('error');
-        })
-        .finally(() => {
-          this.continuing = false;
-        })
+      this.$emit('session', 'stripe')
+      this.getUserStripeVerification(this.user.id, this.verification.stripe.id)
+      .then(session => {
+        this.session = session;
+        this.verificationOngoing = true;
+        return this.$refs.stripeId.verify(this.session.client_secret)
+      })
+      .then(result => {
+        this.$emit('result', result);
+      })
+      .catch(e => {
+        this.continueVerificationError = e;
+        this.$emit('error');
+      })
+      .finally(() => {
+        this.continuing = false;
+      })
     },
 
       createStripeVerificationSession(){
         this.starting = true;
         this.startVerificationError = null;
+        this.$emit('session', 'stripe')
         this.createUserStripeVerification(
             this.user.id,
             this.convertObjectToMetaKeyValue(this.metadata),
