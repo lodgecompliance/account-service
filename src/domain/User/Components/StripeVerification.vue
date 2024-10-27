@@ -173,7 +173,7 @@ export default {
         verification: {
             immediate: true,
             handler(verification) {
-                if(verification) this.getVerification();
+                if(verification?.stripe) this.getVerification();
             }
         }
     }

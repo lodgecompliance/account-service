@@ -136,7 +136,7 @@ export default {
         verification: {
             immediate: true,
             handler(verification){
-              if(!verification) this.startVerification()
+              if(!verification?.smile) this.startVerification()
             }
         }
     }
