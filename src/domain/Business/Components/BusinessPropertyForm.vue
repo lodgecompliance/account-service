@@ -113,6 +113,7 @@
                   :google-places="{
                     label: 'Property Address',
                     outlined: true,
+                    country: business.country,
                     dense: true,
                     clearable: true,
                     value: form.address,
@@ -286,7 +287,7 @@ export default {
               this.$emit(this.property ? "property-updated" : "property-created", property);
               resolve(property);
             }).catch(e => reject(e))
-      })
+      });
     },
 
   },
