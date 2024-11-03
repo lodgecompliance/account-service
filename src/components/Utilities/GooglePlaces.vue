@@ -89,7 +89,9 @@ export default {
             // reset the search results list
             this.location = ''
             this.searchResults = [];
-            this.fetchSuggestions(this.value);
+            if (this.value && this.service) {
+              this.fetchSuggestions(this.value);
+            }
           }
         }
       },
