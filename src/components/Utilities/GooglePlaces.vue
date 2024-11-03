@@ -11,6 +11,7 @@
 
 <script>
 import config from '../../config';
+import { loadGoogleMapsAPI } from '../../helper/googleMapsLoader';
 
 export default {
     name: "GooglePlaces",
@@ -22,19 +23,23 @@ export default {
       loading: false
     }),
 
-    metaInfo () {
-      return {
-        script: [{
-          src: `https://maps.googleapis.com/maps/api/js?key=${config.google.api_key}&libraries=places`,
-          async: true,
-          defer: true,
-          callback: () => this.MapsInit()
-        }]
-      }
-    },
+    // metaInfo () {
+    //   return {
+    //     script: [{
+    //       src: `https://maps.googleapis.com/maps/api/js?key=${config.google.api_key}&libraries=places`,
+    //       async: true,
+    //       defer: true,
+    //       callback: () => this.MapsInit()
+    //     }]
+    //   }
+    // },
 
     props: {
-        value: String
+        value: String,
+        country: {
+          type: String,
+          required: false
+        }
     },
     computed: {
         predictions(){
@@ -54,10 +59,22 @@ export default {
         }
         this.searchResults = predictions;
         this.loading = false
+      },
+      fetchSuggestions (val) {
+        this.loading = true;
+        this.service.getPlacePredictions({
+            input: val,
+            componentRestrictions: {country: this.country}
+            // types: ['(regions)']
+        }, this.displaySuggestions)
       }
     },
 
   mounted() {
+      // Load google maps once across all pages
+      loadGoogleMapsAPI(`${config.google.api_key}`, this.MapsInit).catch((error) => {
+        console.log('Error loading GoogleMaps API');
+      });
       if(this.value) {
         this.location = this.value;
         this.searchResults =  [{description: this.value}]
@@ -65,13 +82,20 @@ export default {
   },
 
   watch: {
+      country: {
+        immediately: true,
+        handler (newCountry) {
+          if (newCountry.length > 0) {
+            // reset the search results list
+            this.location = ''
+            this.searchResults = [];
+            this.fetchSuggestions(this.value);
+          }
+        }
+      },
       search (val) {
         if (val && this.service) {
-            this.loading = true
-            this.service.getPlacePredictions({
-                input: val,
-                // types: ['(regions)']
-            }, this.displaySuggestions)
+          this.fetchSuggestions(val);
         }
       }
     }
