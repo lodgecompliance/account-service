@@ -24,6 +24,7 @@
           label: 'Business Address',
           outlined: true,
           dense: true,
+          country: form.country,
           clearable: true,
           value: form.address,
           rules: [rules.required]
@@ -118,13 +119,12 @@ export default {
   },
 
   methods: {
-
     setForm() {
       const business = this.business || {}
       this.form = {
         name: business.name || null,
-        country: business.country || null,
-        address: business.address || null,
+        country: business.country || '',
+        address: business.address || '',
         rc_number: business.rc_number || null,
         document: business.document || null,
       }
