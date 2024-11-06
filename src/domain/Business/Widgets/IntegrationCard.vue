@@ -18,8 +18,8 @@
           @integration-updated="closeSetup"
           v-on="$listeners"
       >
-        <template #default="{ business, integration, save, saving }">
-          <slot name="setup" v-bind="{ business, integration, save, saving, closeSetup }" />
+        <template #default="{ business, integration, info, save, saving }">
+          <slot name="setup" v-bind="{ business, integration, info, save, saving, closeSetup }" />
         </template>
       </integration-setup>
     </v-card-text>
