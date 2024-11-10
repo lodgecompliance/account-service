@@ -1,7 +1,7 @@
 <template>
   <div>
     <data-container :loading="loading" :error="error"/>
-    <div v-show="!loading">
+    <div v-show="!loading" class="px-2">
         <template v-if="step === 'authenticate'">
             <slot name="before-authentication" />
             <div class="d-flex flex-wrap align-center justify-center">
@@ -75,6 +75,52 @@
               @saved="idVerificationUpdated"
           />
         </template>
+        <template v-if="step === 'business-setup'">
+          <slot name="before-business-setup" />
+          <div v-if="currentBusiness" class="d-flex justify-center">
+            <user-business-switch  />
+          </div>
+          <business-details v-else>
+            <template #actions="{ loading, submitting, submit }">
+              <v-card-actions>
+                <v-btn
+                    :loading="submitting"
+                    :disabled="loading"
+                    color="primary"
+                    @click="submit()"
+                    depressed block
+                >
+                  Submit
+                </v-btn>
+              </v-card-actions>
+            </template>
+          </business-details>
+        </template>
+        <template v-if="step === 'property-setup'">
+          <slot name="before-property-setup" />
+          <business-property-form
+              flat
+              :business="this.currentBusiness"
+              @property-created="propertyCreated"
+          >
+            <template #header>
+              <v-card-subtitle class="d-none"></v-card-subtitle>
+            </template>
+            <template #action="{ submitting, submit }">
+              <v-card-actions>
+                <v-btn
+                    :loading="submitting"
+                    :disabled="submitting"
+                    color="primary"
+                    @click="submit()"
+                    depressed block
+                >
+                  Submit
+                </v-btn>
+              </v-card-actions>
+            </template>
+          </business-property-form>
+        </template>
     </div>
     <div v-if="authenticated" class="text-center mt-5">
       <div v-if="profile">
@@ -102,7 +148,6 @@ import {mapActions, mapGetters, mapMutations} from 'vuex';
 import GoogleSignin from '../Components/GoogleSignin.vue';
 import EmailSignin from '../Components/EmailSignin.vue';
 import PhoneSignin from '../Components/PhoneSignin.vue';
-
 import profileMixin from '@/domain/User/Mixins/profile';
 import formvalidation from '@/helper/formValidation'
 import PersonalInfoForm from "@/domain/User/Components/PersonalInfoForm";
@@ -112,23 +157,32 @@ import appHelper from "@/helper/app";
 import config from "@/config";
 import IdVerificationForm from "@/domain/User/Components/IdVerificationForm.vue";
 import current_user from "@/domain/User/Mixins/current_user";
+import BusinessDetails from "@/domain/User/Widgets/Onboard/BusinessDetails.vue";
+import current_business from "@/domain/Business/Mixins/current_business";
+import BusinessPropertyForm from "@/domain/Business/Components/BusinessPropertyForm.vue";
+import business from "@/domain/Business/Mixins/business";
+import UserBusinessSwitch from "@/domain/User/Components/UserBusinessSwitch.vue";
 
 export default {
     name: 'MiniAuth',
     components: {
+      UserBusinessSwitch,
+      BusinessPropertyForm,
+      BusinessDetails,
       IdVerificationForm,
       PersonalInfoForm,
       GoogleSignin, EmailSignin,
       PhoneSignin, DataContainer
     },
-    mixins: [profileMixin, current_user],
+    mixins: [profileMixin, current_user, current_business, business],
     props: {
       continueTo: String,
       idVerificationRequired: Boolean,
       providers: {
             type: Array,
             default: () => ['google', 'email', 'phone']
-        }
+      },
+      mode: String,
     },
 
     computed: {
@@ -136,18 +190,24 @@ export default {
         authProviders() {
           return appHelper.getAuthProviders()
         },
-        step() {
+        step(){
           if(!this.authenticated) return 'authenticate';
           if(this.authenticated && !this.profile) return 'profile-set';
           if(this.idVerificationRequired && this.profile) return 'id-verification';
+          if(this.mode === 'host') {
+            if(!this.currentBusiness) return 'business-setup';
+            if(!this.properties.length) return 'property-setup'
+          }
           return null;
         },
         completed() {
           let completed = this.authenticated && !!this.profile;
           if(this.idVerificationRequired) {
             const verification = this.profile?.id_verification;
-            completed = completed
-                && (verification?.[verification.provider]?.verified || verification?.manually_completed)
+            completed = completed && verification?.acceptable
+          }
+          if(this.mode === 'host') {
+            completed = completed && this.currentBusiness && this.properties.length
           }
           return completed;
         }
@@ -161,6 +221,7 @@ export default {
             error: null,
             profileComponentKey: 1,
             profileComponentForm: null,
+            properties: []
         }
     },
     
@@ -195,18 +256,46 @@ export default {
           this.error = error;
       },
 
+      propertyCreated(property) {
+        this.properties.push(property)
+      },
+
+      getProperties() {
+        if(!this.currentBusiness) return;
+        this.getBusinessById(this.currentBusiness.id, `
+          properties {
+              id
+              name
+              email
+              phone
+              address
+              status
+              image
+              cover_image
+            }
+        `)
+        .then(business => {
+          this.properties = (business?.properties || [])
+        })
+      }
+
     },
 
   watch: {
-      completed: {
-        immediate: true,
-        handler(c) {
-          if(c) this.$emit('completed', c)
-        }
+    completed: {
+      immediate: true,
+      handler(c) {
+        if(c) this.$emit('completed', c)
       }
+    },
+    currentBusiness: {
+      immediate: true,
+      handler() {
+        this.getProperties();
+      }
+    }
   },
-
-    created() {
+  created() {
       this.loading = true;
       auth.onAuthStateChanged(user => {
         this.SET_AUTH(user);

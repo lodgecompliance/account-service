@@ -59,7 +59,7 @@
             :disabled="loading || !canSubmit"
             color="primary" depressed
             @click="submit()" block>
-          Submit
+          {{verification.manually_completed ? 'Resubmit' : 'Submit'}}
         </v-btn>
       </template>
     </v-form>

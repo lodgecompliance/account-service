@@ -26,6 +26,7 @@ export default gql`
                     created_at
                     updated_at
                 }
+                acceptable
                 manually_completed
                 stripe {
                     id

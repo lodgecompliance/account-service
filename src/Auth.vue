@@ -8,15 +8,22 @@
           </div>
           <mini-auth
                   :id-verification-required="['true', '1'].includes($route.query.idVerification)"
+                  :mode="$route.query.mode"
                   @completed="authCompleted">
                 <template #before-authentication>
                   <h4 class="text-center">Sign in with one the following options before proceeding</h4>
                 </template>
                 <template #before-profile-set>
-                  <h4 class="text-center">Complete your profile</h4>
+                  <h4 class="text-center headline">Complete your profile</h4>
                 </template>
                 <template #before-id-verification>
-                  <h4 class="text-center">Complete your ID verification</h4>
+                  <h4 class="text-center headline">Complete ID verification</h4>
+                </template>
+                <template #before-business-setup>
+                  <h4 class="text-center headline">Setup a Business</h4>
+                </template>
+                <template #before-property-setup>
+                  <h4 class="text-center headline">Setup a Property</h4>
                 </template>
               </mini-auth>
         </v-col>
