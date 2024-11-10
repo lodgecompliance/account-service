@@ -99,6 +99,7 @@
               :items="businesses"
               :value="business ? business.id : null"
               @input="b => business = b"
+              label="Business"
               outlined dense
               return-object
               placeholder="Select a business"
