@@ -311,9 +311,9 @@ export default {
                   }
                 }
             `)
-            .then(business => {
-              this.integrations = (business?.integrations || [])
-            }).finally(() => this.loading = false)
+        .then(business => {
+          this.integrations = (business?.integrations || [])
+        }).finally(() => this.loading = false)
       }
     }
   }

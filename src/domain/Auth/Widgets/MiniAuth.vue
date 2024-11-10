@@ -77,10 +77,7 @@
         </template>
         <template v-if="step === 'business-setup'">
           <slot name="before-business-setup" />
-          <div v-if="currentBusiness" class="d-flex justify-center">
-            <user-business-switch  />
-          </div>
-          <business-details v-else>
+          <business-details>
             <template #actions="{ loading, submitting, submit }">
               <v-card-actions>
                 <v-btn
@@ -98,9 +95,19 @@
         </template>
         <template v-if="step === 'property-setup'">
           <slot name="before-property-setup" />
+          <business-select
+              :items="businesses"
+              :value="business ? business.id : null"
+              @input="b => business = b"
+              outlined dense
+              return-object
+              placeholder="Select a business"
+              :select-first-as-default="true"
+          />
           <business-property-form
+              v-if="business"
               flat
-              :business="this.currentBusiness"
+              :business="business"
               @property-created="propertyCreated"
           >
             <template #header>
@@ -121,23 +128,6 @@
             </template>
           </business-property-form>
         </template>
-    </div>
-    <div v-if="authenticated" class="text-center mt-5">
-      <div v-if="profile">
-        <small class="grey--text">Authenticated as</small>
-        <p>{{ profile.full_name }}</p>
-      </div>
-      <v-btn v-if="completed"
-             color="primary"
-             depressed small
-             @click="$emit('completed', true)">
-        Continue
-      </v-btn>
-      <v-btn v-if="authenticated" text color="red"
-             depressed small
-             @click="signout">
-        Signout
-      </v-btn>
     </div>
   </div>
 </template>
@@ -160,13 +150,12 @@ import current_user from "@/domain/User/Mixins/current_user";
 import BusinessDetails from "@/domain/User/Widgets/Onboard/BusinessDetails.vue";
 import current_business from "@/domain/Business/Mixins/current_business";
 import BusinessPropertyForm from "@/domain/Business/Components/BusinessPropertyForm.vue";
-import business from "@/domain/Business/Mixins/business";
-import UserBusinessSwitch from "@/domain/User/Components/UserBusinessSwitch.vue";
+import BusinessSelect from "@/domain/Business/Components/BusinessSelect.vue";
 
 export default {
     name: 'MiniAuth',
     components: {
-      UserBusinessSwitch,
+      BusinessSelect,
       BusinessPropertyForm,
       BusinessDetails,
       IdVerificationForm,
@@ -174,7 +163,7 @@ export default {
       GoogleSignin, EmailSignin,
       PhoneSignin, DataContainer
     },
-    mixins: [profileMixin, current_user, current_business, business],
+    mixins: [profileMixin, current_user, current_business ],
     props: {
       continueTo: String,
       idVerificationRequired: Boolean,
@@ -195,7 +184,7 @@ export default {
           if(this.authenticated && !this.profile) return 'profile-set';
           if(this.idVerificationRequired && this.profile) return 'id-verification';
           if(this.mode === 'host') {
-            if(!this.currentBusiness) return 'business-setup';
+            if(!this.businesses.length) return 'business-setup';
             if(!this.properties.length) return 'property-setup'
           }
           return null;
@@ -207,7 +196,7 @@ export default {
             completed = completed && verification?.acceptable
           }
           if(this.mode === 'host') {
-            completed = completed && this.currentBusiness && this.properties.length
+            completed = completed && this.business && this.properties.length
           }
           return completed;
         }
@@ -221,6 +210,7 @@ export default {
             error: null,
             profileComponentKey: 1,
             profileComponentForm: null,
+            business: null,
             properties: []
         }
     },
@@ -251,51 +241,29 @@ export default {
           this.loading = false
         }
       },
-
       authError(error) {
           this.error = error;
       },
-
       propertyCreated(property) {
         this.properties.push(property)
+      }
+    },
+
+    watch: {
+      completed: {
+        immediate: true,
+        handler(c) {
+          if(c) this.$emit('completed', c)
+        }
       },
-
-      getProperties() {
-        if(!this.currentBusiness) return;
-        this.getBusinessById(this.currentBusiness.id, `
-          properties {
-              id
-              name
-              email
-              phone
-              address
-              status
-              image
-              cover_image
-            }
-        `)
-        .then(business => {
-          this.properties = (business?.properties || [])
-        })
-      }
-
-    },
-
-  watch: {
-    completed: {
-      immediate: true,
-      handler(c) {
-        if(c) this.$emit('completed', c)
+      business: {
+        immediate: true,
+        handler(business) {
+          this.properties = business?.properties || []
+        }
       }
     },
-    currentBusiness: {
-      immediate: true,
-      handler() {
-        this.getProperties();
-      }
-    }
-  },
-  created() {
+    created() {
       this.loading = true;
       auth.onAuthStateChanged(user => {
         this.SET_AUTH(user);
@@ -314,7 +282,6 @@ export default {
               this.getAuth()
               break;
             case 'signout':
-              console.log('gonna signout')
               this.signout()
               break;
           }
