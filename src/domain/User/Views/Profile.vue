@@ -52,7 +52,7 @@
             width="400"
             persistent
         >
-          <business-details @saved="newBusinessCreated">
+          <business-details @saved="businessCreated">
             <template #header>
               <v-card-title class="d-flex justify-space-between">
                 Create Business
@@ -109,6 +109,14 @@ export default {
   computed: {
     pendingOnboardingItems() {
       return (this.profile?.onboarding || []).filter(item => !item.completed)
+    }
+  },
+  methods: {
+    businessCreated(business) {
+      this.newBusinessCreated(business)
+      this.getBusinessOnboardingItems().then(() => {
+        this.$router.push({ name: 'business.profile', params: { business: business.id } })
+      })
     }
   },
   watch: {

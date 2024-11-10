@@ -1,11 +1,13 @@
 <template>
   <v-app>
+    <v-app-bar app color="white" elevation="0">
+      <v-toolbar-title class="text-center justify-center">
+        <img src="@/assets/img/app-logo.png" width="200px"  alt="Lode Compliance"/>
+      </v-toolbar-title>
+    </v-app-bar>
     <v-main>
       <v-row justify="center">
         <v-col cols="12" md="6" lg="4" class="auth-wrapper-inner">
-          <div class="text-center py-10">
-            <img src="@/assets/img/app-logo.png" width="200px"  alt="Lode Compliance"/>
-          </div>
           <mini-auth
                   :id-verification-required="['true', '1'].includes($route.query.idVerification)"
                   :mode="$route.query.mode"
@@ -29,11 +31,13 @@
         </v-col>
       </v-row>
     </v-main>
+<!--    <v-footer app></v-footer>-->
   </v-app>
 </template>
 <script>
 import {mapActions, mapGetters} from "vuex";
 import MiniAuth from "@/domain/Auth/Widgets/MiniAuth.vue";
+
 export default {
   name: 'Auth',
   components: {
