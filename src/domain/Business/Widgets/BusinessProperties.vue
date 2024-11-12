@@ -127,11 +127,11 @@ export default {
                   }
                 }
             `)
-          .then(business => {
-            this.properties = (business?.properties || [])
-          })
-          .catch(e => { this.error = e })
-          .finally(() => this.loading = false)
+      .then(business => {
+        this.properties = (business?.properties || [])
+      })
+      .catch(e => { this.error = e })
+      .finally(() => this.loading = false)
     }
   },
   watch: {

@@ -70,6 +70,7 @@
     import current_user from "@/domain/User/Mixins/current_user";
     import BusinessImageForm from "@/domain/Business/Components/BusinessImageUpdate.vue";
     import BusinessOnboardingList from "@/domain/Business/Widgets/OnboardingList.vue";
+    import {mapMutations} from "vuex";
 
     export default {
         name: "BusinessProfilePage",
@@ -92,11 +93,12 @@
           owner() {
             return this.currentBusiness?.owner?.user;
           },
-          pendingOnboardingItems() {
-            return (this.currentBusiness?.onboarding || []).filter(item => !item.completed)
-          }
         },
-        methods: {
+      mounted() {
+        this.SET_MODE(this.$route.params.business)
+      },
+      methods: {
+          ...mapMutations(['SET_MODE']),
           businessUpdate(update) {
             if(update.id === this.currentBusiness?.id) {
               this.businessUpdated(update)

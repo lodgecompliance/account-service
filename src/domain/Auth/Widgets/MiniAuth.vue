@@ -1,7 +1,7 @@
 <template>
   <div>
     <data-container :loading="loading" :error="error"/>
-    <div v-show="!loading">
+    <div v-show="!loading" class="px-2">
         <template v-if="step === 'authenticate'">
             <slot name="before-authentication" />
             <div class="d-flex flex-wrap align-center justify-center">
@@ -75,23 +75,60 @@
               @saved="idVerificationUpdated"
           />
         </template>
-    </div>
-    <div v-if="authenticated" class="text-center mt-5">
-      <div v-if="profile">
-        <small class="grey--text">Authenticated as</small>
-        <p>{{ profile.full_name }}</p>
-      </div>
-      <v-btn v-if="completed"
-             color="primary"
-             depressed small
-             @click="$emit('completed', true)">
-        Continue
-      </v-btn>
-      <v-btn v-if="authenticated" text color="red"
-             depressed small
-             @click="signout">
-        Signout
-      </v-btn>
+        <template v-if="step === 'business-setup'">
+          <slot name="before-business-setup" />
+          <business-details>
+            <template #actions="{ loading, submitting, submit }">
+              <v-card-actions>
+                <v-btn
+                    :loading="submitting"
+                    :disabled="loading"
+                    color="primary"
+                    @click="submit()"
+                    depressed block
+                >
+                  Submit
+                </v-btn>
+              </v-card-actions>
+            </template>
+          </business-details>
+        </template>
+        <template v-if="step === 'property-setup'">
+          <slot name="before-property-setup" />
+          <business-select
+              :items="businesses"
+              :value="business ? business.id : null"
+              @input="b => business = b"
+              label="Business"
+              outlined dense
+              return-object
+              placeholder="Select a business"
+              :select-first-as-default="true"
+          />
+          <business-property-form
+              v-if="business"
+              flat
+              :business="business"
+              @property-created="propertyCreated"
+          >
+            <template #header>
+              <v-card-subtitle class="d-none"></v-card-subtitle>
+            </template>
+            <template #action="{ submitting, submit }">
+              <v-card-actions>
+                <v-btn
+                    :loading="submitting"
+                    :disabled="submitting"
+                    color="primary"
+                    @click="submit()"
+                    depressed block
+                >
+                  Submit
+                </v-btn>
+              </v-card-actions>
+            </template>
+          </business-property-form>
+        </template>
     </div>
   </div>
 </template>
@@ -102,7 +139,6 @@ import {mapActions, mapGetters, mapMutations} from 'vuex';
 import GoogleSignin from '../Components/GoogleSignin.vue';
 import EmailSignin from '../Components/EmailSignin.vue';
 import PhoneSignin from '../Components/PhoneSignin.vue';
-
 import profileMixin from '@/domain/User/Mixins/profile';
 import formvalidation from '@/helper/formValidation'
 import PersonalInfoForm from "@/domain/User/Components/PersonalInfoForm";
@@ -112,23 +148,31 @@ import appHelper from "@/helper/app";
 import config from "@/config";
 import IdVerificationForm from "@/domain/User/Components/IdVerificationForm.vue";
 import current_user from "@/domain/User/Mixins/current_user";
+import BusinessDetails from "@/domain/User/Widgets/Onboard/BusinessDetails.vue";
+import current_business from "@/domain/Business/Mixins/current_business";
+import BusinessPropertyForm from "@/domain/Business/Components/BusinessPropertyForm.vue";
+import BusinessSelect from "@/domain/Business/Components/BusinessSelect.vue";
 
 export default {
     name: 'MiniAuth',
     components: {
+      BusinessSelect,
+      BusinessPropertyForm,
+      BusinessDetails,
       IdVerificationForm,
       PersonalInfoForm,
       GoogleSignin, EmailSignin,
       PhoneSignin, DataContainer
     },
-    mixins: [profileMixin, current_user],
+    mixins: [profileMixin, current_user, current_business ],
     props: {
       continueTo: String,
       idVerificationRequired: Boolean,
       providers: {
             type: Array,
             default: () => ['google', 'email', 'phone']
-        }
+      },
+      mode: String,
     },
 
     computed: {
@@ -136,18 +180,24 @@ export default {
         authProviders() {
           return appHelper.getAuthProviders()
         },
-        step() {
+        step(){
           if(!this.authenticated) return 'authenticate';
           if(this.authenticated && !this.profile) return 'profile-set';
           if(this.idVerificationRequired && this.profile) return 'id-verification';
+          if(this.mode === 'host') {
+            if(!this.businesses.length) return 'business-setup';
+            if(!this.properties.length) return 'property-setup'
+          }
           return null;
         },
         completed() {
           let completed = this.authenticated && !!this.profile;
           if(this.idVerificationRequired) {
             const verification = this.profile?.id_verification;
-            completed = completed
-                && (verification?.[verification.provider]?.verified || verification?.manually_completed)
+            completed = completed && verification?.acceptable
+          }
+          if(this.mode === 'host') {
+            completed = completed && this.business && this.properties.length
           }
           return completed;
         }
@@ -161,6 +211,8 @@ export default {
             error: null,
             profileComponentKey: 1,
             profileComponentForm: null,
+            business: null,
+            properties: []
         }
     },
     
@@ -190,22 +242,28 @@ export default {
           this.loading = false
         }
       },
-
       authError(error) {
           this.error = error;
       },
-
+      propertyCreated(property) {
+        this.properties.push(property)
+      }
     },
 
-  watch: {
+    watch: {
       completed: {
         immediate: true,
         handler(c) {
           if(c) this.$emit('completed', c)
         }
+      },
+      business: {
+        immediate: true,
+        handler(business) {
+          this.properties = business?.properties || []
+        }
       }
-  },
-
+    },
     created() {
       this.loading = true;
       auth.onAuthStateChanged(user => {
@@ -225,7 +283,6 @@ export default {
               this.getAuth()
               break;
             case 'signout':
-              console.log('gonna signout')
               this.signout()
               break;
           }

@@ -13,7 +13,7 @@
           :user="user"
           :verification="verification"
           :is-owner="isOwner"
-          @error="useManual = true"
+          @error="submitManual"
           @session="onVerificationSession"
           @result="stripeVerificationResult"
           @saved="synced => $emit('synced', synced)"
@@ -23,36 +23,41 @@
           :user="user"
           :verification="verification"
           :is-owner="isOwner"
-          @error="useManual = true"
+          @error="submitManual"
           @session="onVerificationSession"
           @submitted="smileVerificationSubmitted"
           @saved="synced => $emit('synced', synced)"
       />
-      <template v-if="!currentSession">
-        <div v-if="!verified && verification.manually_completed">
-          <div class="mt-3">
-            <v-alert
-                colored-border
-                border="left"
-                type="info"
-            >
-              ID verification was not successful, but alternative manual ID was provided
-            </v-alert>
-            <v-btn v-if="isOwner" small color="primary" @click="submitManual" class="mt-2" depressed>Re submit ID</v-btn>
-          </div>
-        </div>
-        <div v-if="useManual">
-          <p class="text-center mt-5">Your verification was not successful, kindly provide us alternative document
-          </p>
-          <manual-verification
-              :user="user"
-              :country="country"
-              :verification="verification"
-              :require-upload="true"
-              @saved="manualIdSubmitted"
-          />
-        </div>
-      </template>
+      <v-dialog :value="useManual" width="400" scrollable persistent>
+        <v-card>
+          <v-card-title>
+            <span>ID Verification</span>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="useManual = false">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+              <div class="mt-3">
+                <v-alert
+                    v-if="verification.manually_completed"
+                    colored-border
+                    border="left"
+                    type="info"
+                >
+                  ID verification was not successful, but alternative manual ID was previously uploaded
+                </v-alert>
+                <manual-verification
+                    :user="user"
+                    :country="country"
+                    :verification="verification"
+                    :require-upload="true"
+                    @saved="manualIdSubmitted"
+                />
+              </div>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </data-container>
 </template>
 

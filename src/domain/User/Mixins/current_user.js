@@ -59,9 +59,6 @@ export default {
                 color: "success"
             })
             this.createBusiness = false;
-            this.getBusinessOnboardingItems().then(() => {
-                this.$router.push({ name: 'business.profile', params: { business: business.id } })
-            })
         },
 
         businessUpdated(update) {

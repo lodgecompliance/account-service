@@ -1,5 +1,5 @@
 <template>
-  <v-card :loading="loading" :disabled="loading">
+  <v-card :loading="loading" :disabled="loading" v-bind="$attrs">
     <file-upload
         v-if="property"
         @input="image => form.cover_image = image"
@@ -36,15 +36,16 @@
         </v-img>
       </template>
     </file-upload>
-    <v-card-title v-else class="d-flex justify-space-between">
-      <span>Property</span>
-      <v-btn icon @click="cancel">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-card-title>
+    <slot name="header" v-else>
+      <v-card-title class="d-flex justify-space-between">
+        <span>Property</span>
+        <v-btn icon @click="cancel">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-card-title>
+    </slot>
     <div v-if="property" class="d-flex justify-space-between mb-3 px-3">
       <div class="d-flex align-center">
-
         <div class="ml-2">
           <div class="flex">
             {{ property.name }}
@@ -310,9 +311,9 @@ export default {
                   }
                 }
             `)
-            .then(business => {
-              this.integrations = (business?.integrations || [])
-            }).finally(() => this.loading = false)
+        .then(business => {
+          this.integrations = (business?.integrations || [])
+        }).finally(() => this.loading = false)
       }
     }
   }
