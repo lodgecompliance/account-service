@@ -20,7 +20,6 @@
                       </div>
                       <template v-if="!verificationSent">
                         <phone-number v-model="phone" dense outlined />
-                        <div id="recaptcha-container"></div>
                       </template>
                       <template v-else>
                         <div class="d-flex justify-center">
@@ -69,6 +68,7 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
+        <div id="phone-recaptcha-container"></div>
     </div>
 </template>
 <script>
@@ -110,13 +110,17 @@ export default {
             }
 
             this.loading = true;
-
-            auth.signInWithPhoneNumber(this.phone.international, this.getReCaptcha())
+            const appVerifier = window.recaptchaVerifierPhone;
+            auth.signInWithPhoneNumber(this.phone.international, appVerifier)
             .then(confirmationResult => {
                 window.confirmationResult = confirmationResult;
                 this.verificationSent = true;
             })
             .catch(e => {
+                // Reset recaptcha state
+                window.recaptchaVerifierPhone.render().then(function(widgetId) {
+                    appVerifier.reset(widgetId);
+                });
                 this.$emit('error', e);
                 this.start = false;
             })
@@ -166,12 +170,9 @@ export default {
             })
         },
 
-        getReCaptcha() {
-            const container = document.createElement('div');
-            document.body.append(container);
-            if(container) {
-                container.innerHTML = '';
-                window.recaptchaVerifier = new fb.auth.RecaptchaVerifier(container, {
+        mountRecaptcha() {
+            if (document.getElementById('phone-recaptcha-container')) {
+                    window.recaptchaVerifierPhone = new fb.auth.RecaptchaVerifier("phone-recaptcha-container", {
                     'size': 'invisible',
                     'callback': (response) => {
                         this.reCaptchaSolved = true;
@@ -182,10 +183,14 @@ export default {
                         });
                     }
                 });
-                return window.recaptchaVerifier;
+
+                window.recaptchaVerifierPhone.render().then(function(widgetId) {
+                    window.recaptchaWidgetPhoneId = widgetId;
+                });
+                
+            } else {
+                console.log("ReCaptcha container is not available");
             }
-            return null;
-            
         },
 
         cancel() {
@@ -196,7 +201,13 @@ export default {
           this.phone = {};
           this.start = false;
         }
-    }
+    },
+
+    mounted() {
+        setTimeout(() => {
+            this.mountRecaptcha();
+        }, 1000);
+    },
 
 }
 </script>
