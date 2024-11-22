@@ -163,11 +163,12 @@
                       });
                       return;
                   }
-                  // console.log('Result from card payment---->', result);
-
-                  if(result.error) vm.$emit('error', result.error)
-                  else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
-                      vm.$emit('card-payment-confirmed', result.paymentIntent);
+                  if(result.error) {
+                    vm.$emit('error', result.error);
+                    // reinitialize stripe token (If not, if user adds new card details, it fails)
+                    this.createToken();
+                  } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
+                    vm.$emit('card-payment-confirmed', result.paymentIntent);
                   }
               })
               .catch(e => {
