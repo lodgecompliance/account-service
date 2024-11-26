@@ -12,21 +12,24 @@
         </div>
         <div class="">
           <slot name="cta" v-bind="{ account }" />
-          <v-menu origin="center center" transition="scale-transition" :disabled="!account">
-            <template v-slot:activator="{ on }">
-              <v-btn icon v-on="on">
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
-            <v-list dense>
-              <v-list-item @click="newWalletDialog = true">
-                <v-list-item-content>
-                  <v-list-item-title>Create Wallet</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <slot name="menu-items" />
-            </v-list>
-          </v-menu>
+          <v-btn v-if="wallets.length > 0" text color="primary" @click="newWalletDialog = true" :disabled="!account">
+            <v-icon>mdi-plus</v-icon> Create Wallet
+          </v-btn>
+          <!--          <v-menu origin="center center" transition="scale-transition" :disabled="!account">-->
+          <!--            <template v-slot:activator="{ on }">-->
+          <!--              <v-btn icon v-on="on">-->
+          <!--                <v-icon>mdi-dots-vertical</v-icon>-->
+          <!--              </v-btn>-->
+          <!--            </template>-->
+          <!--            <v-list dense>-->
+          <!--              <v-list-item @click="newWalletDialog = true">-->
+          <!--                <v-list-item-content>-->
+          <!--                  <v-list-item-title>Create Wallet</v-list-item-title>-->
+          <!--                </v-list-item-content>-->
+          <!--              </v-list-item>-->
+          <!--              <slot name="menu-items" />-->
+          <!--            </v-list>-->
+          <!--          </v-menu>-->
 
           <v-dialog
               v-model="newWalletDialog"

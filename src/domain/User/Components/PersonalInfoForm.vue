@@ -243,6 +243,9 @@ export default {
       }
         this.$refs.confirmation.open();
     }
+  },
+  mounted() {
+    console.log("Mounted");
   }
 }
 </script>
