@@ -183,7 +183,9 @@ export default {
         step(){
           if(!this.authenticated) return 'authenticate';
           if(this.authenticated && !this.profile) return 'profile-set';
-          if(this.idVerificationRequired && this.profile) return 'id-verification';
+          if(this.idVerificationRequired) {
+            if(!this.idVerification.acceptable) return 'id-verification';
+          }
           if(this.mode === 'host') {
             if(!this.businesses.length) return 'business-setup';
             if(!this.properties.length) return 'property-setup'

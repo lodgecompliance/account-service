@@ -131,6 +131,7 @@ export default {
                             id_verification {
                                 country
                                 provider
+                                acceptable
                                 manually_completed
                                 first_name
                                 last_name
