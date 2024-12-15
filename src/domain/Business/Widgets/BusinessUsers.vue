@@ -43,10 +43,26 @@
         </template>
 
         <template v-slot:item.action="{ item }">
-          <v-btn icon @click="user = item">
-            <v-icon color="primary">mdi-eye</v-icon>
-          </v-btn>
-          <v-btn icon @click="(e) => {
+          <div class="d-inline-flex align-center justify-space-around">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon  v-bind="attrs" v-on="on" @click="user = item">
+                  <v-icon color="primary">mdi-eye</v-icon>
+                </v-btn>
+              </template>
+              <span>View User</span>
+            </v-tooltip>
+            <v-tooltip v-if="!item.user" bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn v-bind="attrs" v-on="on" icon @click="inviteUser = item">
+                  <v-icon color="warning">mdi-content-copy</v-icon>
+                </v-btn>
+              </template>
+              <span>Copy Invitation Link</span>
+            </v-tooltip>
+            <v-tooltip v-if="item.role !== 'admin'" bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on"  @click="(e) => {
                             currentUser = item;
                             confirmation = {
                               text: `Are you sure you want to delete this user <br/> <strong>${item.user ? item.user.email : item.email}</strong>`,
@@ -54,10 +70,22 @@
                             }
                             $refs.actionConfirmation.open()
                           }">
-            <v-icon color="red">mdi-delete</v-icon>
-          </v-btn>
+                  <v-icon color="red">mdi-delete</v-icon>
+                </v-btn>
+              </template>
+              <span>Delete User</span>
+            </v-tooltip>
+          </div>
         </template>
       </v-data-table>
+
+      <business-invite-dialog
+          :business="business"
+          :inviteUser="inviteUser"
+          :has-activator="false"
+          @cancel="inviteUser = null"
+          @link-copied="inviteUser = null"
+      />
 
       <business-user-dialog
           :business="business"
@@ -73,23 +101,25 @@
 
 <script>
 import gql from "graphql-tag";
-import { mapActions } from "vuex";
+import {mapActions} from "vuex";
 import ProfileAvatar from "@/components/ProfileAvatar.vue";
 import ErrorHandler from "@/components/ErrorHandler.vue";
 import business from "@/domain/Business/Mixins/business";
 import BusinessUserDialog from "@/domain/Business/Widgets/UserDialog.vue";
+import BusinessInviteDialog from "@/domain/Business/Widgets/InviteDialog.vue";
 import ItemStatus from "@/components/ItemStatus.vue";
 import ConfirmationDialog from "@/components/Utilities/ConfirmationDialog";
 
 export default {
   name: 'BusinessUsers',
   mixins: [ business ],
-  components:{ItemStatus, BusinessUserDialog, ErrorHandler, ProfileAvatar, ConfirmationDialog },
+  components:{ItemStatus, BusinessUserDialog, BusinessInviteDialog, ErrorHandler, ProfileAvatar, ConfirmationDialog },
   data(){
     return {
       loading: false,
       users: [],
       user: null,
+      inviteUser: null,
       error: null,
       headers: [
         { text: 'Name', value: 'user.full_name' },
@@ -117,13 +147,31 @@ export default {
 
     userCreated(user) {
       this.users.push(user);
+      this.users = this.refreshUserProperties(this.users);
     },
     userUpdated(user) {
-      this.users = this.updateItemInArray(user, 'id', this.users);
+      this.users = this.refreshUserProperties(this.updateItemInArray(user, 'id', this.users));
       this.user = null;
     },
     removeUser(id) {
       this.users = this.users.filter(user => user.id !== id);
+      this.users = this.refreshUserProperties(this.users);
+    },
+
+    refreshUserProperties(loadedUsers) {
+      return loadedUsers.map((user) => {
+        const userProperties = user.properties || [];
+        const enrichedProperties = userProperties.map((property) => {
+          const businessProperty = Object.values(this.business.properties).find(
+              (property) => property.id === property.id
+          );
+          return businessProperty
+              ? {...property, name: businessProperty.name, address: businessProperty.address}
+              : null;
+        }).filter(Boolean);
+
+        return {...user, properties: enrichedProperties};
+      });
     },
 
     loadUsers() {
@@ -154,7 +202,8 @@ export default {
             }
         `)
       .then(business => {
-        this.users = (business?.users || [])
+        const tempUsers = (business?.users || []);
+        this.users = this.refreshUserProperties(tempUsers);
       })
       .catch(e => { this.error = e })
       .finally(() => this.loading = false)
@@ -180,7 +229,6 @@ export default {
           this.removeUser(response.data.removeBusinessUser);
         })
       }
-
   },
 
   watch: {

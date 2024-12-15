@@ -195,7 +195,8 @@ export default {
                             email
                             status
                             permissions
-                            invite_url   
+                            invite_url
+                            user_id
                             properties {
                                 id
                                 enabled
