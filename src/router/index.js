@@ -21,6 +21,7 @@ import BusinessWallets from "@/domain/Business/Views/Wallets.vue";
 import BusinessBilling from "@/domain/Business/Views/Billing.vue";
 import Signout from "@/domain/Auth/Views/Signout.vue";
 import UserSharedProfile from "@/domain/User/Views/SharedProfile.vue";
+import AcceptInvitePage from "@/domain/Business/Views/AcceptInvite.vue";
 
 Vue.use(VueRouter)
 
@@ -77,6 +78,15 @@ const routes = [
     component: UserProfile,
     meta: {
       title: "Profile"
+    },
+    beforeEnter: multiguard([middleware.auth])
+  },
+  {
+    path: '/invite/:businessId/:propertyId',
+    name: 'user.accept.invite',
+    component: AcceptInvitePage,
+    meta: {
+      title: "Business Property Invitation"
     },
     beforeEnter: multiguard([middleware.auth])
   },
