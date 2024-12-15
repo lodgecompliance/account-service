@@ -65,8 +65,6 @@ import ItemStatus from "@/components/ItemStatus.vue";
 import ErrorHandler from "@/components/ErrorHandler.vue";
 import BusinessPropertyDialog from "@/domain/Business/Widgets/PropertyDialog.vue";
 import business from "@/domain/Business/Mixins/business";
-import config from "@/config";
-import {mapActions} from "vuex";
 export default {
   name: 'BusinessProperties',
   mixins:[business],
