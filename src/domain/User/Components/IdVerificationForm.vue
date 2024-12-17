@@ -206,7 +206,7 @@ export default {
             },
             {
               label: 'NIN',
-              value: 'NIN',
+              value: 'NIN_V2',
               validator: v => {
                 return /^[0-9]{11}$/.test(v) || 'Format should be 00000000000'
               }
