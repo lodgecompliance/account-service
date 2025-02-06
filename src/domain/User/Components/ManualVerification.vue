@@ -176,7 +176,7 @@ export default {
             },
             {
               name: 'NIN',
-              value: 'NIN',
+              value: 'NIN_V2',
               upload: true,
               validator: v => {
                 return /^[0-9]{11}$/.test(v) || 'Format should be 00000000000'

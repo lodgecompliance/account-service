@@ -81,7 +81,7 @@ jobs:
         run: |
           echo "${{ secrets.CI_SERVICE_ACCOUNT }}" | base64 --decode > "service-account.json"
       - name: Deploy to firebase
-        run: firebase deploy --only hosting -P dev
+        run: firebase deploy --only hosting -P staging
       - name: Remove credentials file
         if: success() || failure()
         run: |
