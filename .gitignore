@@ -28,3 +28,5 @@ yarn-error.log*
 .env.staging
 .env.development
 .env.production
+
+service-account*.json

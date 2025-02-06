@@ -1,20 +1,20 @@
 {
   "projects": {
-    "dev": "guestregistration-4140a",
-    "prod": "lodge-compliance-59f61"
+    "staging": "lc-staging-785dc",
+    "production": "lc-production-447313"
   },
   "targets": {
-    "guestregistration-4140a": {
+    "lc-staging-785dc": {
       "hosting": {
         "lc": [
-          "lc-account-staging"
+          "lc-staging-account"
         ]
       }
     },
-    "lodge-compliance-59f61": {
+    "lc-production-447313": {
       "hosting": {
         "lc": [
-          "lc-account"
+          "lc-production-account"
         ]
       }
     }
